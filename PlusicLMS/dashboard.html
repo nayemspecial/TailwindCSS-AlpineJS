@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | PlasicLMS</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f3f4f6; 
+            overflow-x: hidden; 
+        }
+
+        /* Custom Scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+            transition: scrollbar-color 0.3s ease;
+        }
+
+        *:hover {
+            scrollbar-color: #cbd5e1 transparent;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: transparent;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+
+        :hover::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+
+        /* Blob Background */
+        .blob-bg { position: fixed; inset: 0; z-index: -1; background: #f8fafc; overflow: hidden; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; animation: float 10s infinite alternate; }
+        .b1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #bbf7d0; }
+        .b2 { bottom: -10%; right: -10%; width: 50vw; height: 50vw; background: #bae6fd; animation-delay: 2s; }
+        @keyframes float { 0% { transform: translate(0,0); } 100% { transform: translate(40px, 40px); } }
+
+        /* Mobile Overlay */
+        .mobile-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Sidebar Close Button */
+        .sidebar-close-btn {
+            display: none;
+        }
+        @media (max-width: 1024px) {
+            .sidebar-close-btn {
+                display: flex;
+            }
+        }
+
+        /* Utilities */
+        .active-nav { background: rgba(22, 163, 74, 0.1); color: #15803d; border-right: 3px solid #16a34a; }
+        [x-cloak] { display: none !important; }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .mobile-hide { display: none !important; }
+            .mobile-full { width: 100% !important; }
+            .mobile-stack { flex-direction: column !important; }
+            .mobile-text-center { text-align: center !important; }
+            .mobile-p-4 { padding: 1rem !important; }
+        }
+    </style>
+</head>
+<body class="text-slate-600" x-data="lmsApp()" x-init="initApp()">
+
+    <div class="blob-bg">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+    </div>
+
+    <!-- Mobile Overlay (only for mobile) -->
+    <div class="mobile-overlay lg:hidden" 
+         :class="sidebarOpen ? 'active' : ''"
+         @click="sidebarOpen = false"
+         x-show="sidebarOpen"
+         x-transition.opacity>
+    </div>
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar with Close Button -->
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" 
+               class="fixed inset-y-0 left-0 z-50 w-72 glass-panel transition-transform duration-300 lg:static lg:translate-x-0 flex flex-col border-r border-white/50">
+            
+            <div class="h-20 flex items-center justify-between px-6 border-b border-slate-100">
+                <a href="#" class="flex items-center gap-2 font-bold text-xl text-brand-700 tracking-tight">
+                    <div class="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center">
+                        <i class="ph ph-graduation-cap text-xl"></i>
+                    </div>
+                    PlasicLMS
+                </a>
+                
+                <!-- Close button for mobile (only visible on mobile) -->
+                <button @click="sidebarOpen = false" class="sidebar-close-btn text-slate-500 p-2 hover:bg-slate-100 rounded-lg">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+
+            <div class="px-6 py-4">
+                <div class="bg-slate-100 p-1 rounded-xl flex text-xs font-bold relative">
+                    <button @click="switchRole('student')" 
+                            :class="currentRole === 'student' ? 'bg-white shadow text-brand-700' : 'text-slate-500 hover:text-slate-700'"
+                            class="flex-1 py-2 rounded-lg transition-all z-10">Student</button>
+                    <button @click="switchRole('instructor')" 
+                            :class="currentRole === 'instructor' ? 'bg-white shadow text-brand-700' : 'text-slate-500 hover:text-slate-700'"
+                            class="flex-1 py-2 rounded-lg transition-all z-10">Instructor</button>
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto px-4 py-2 space-y-1">
+                <template x-for="menu in currentMenu" :key="menu.id">
+                    <a href="#" @click.prevent="navigate(menu.id)" 
+                       :class="currentPage === menu.id ? 'active-nav font-bold' : 'hover:bg-white/60 hover:text-brand-700 font-medium'"
+                       class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group">
+                        <i :class="menu.icon" class="text-lg group-hover:scale-110 transition"></i> 
+                        <span x-text="menu.label"></span>
+                        <span x-show="menu.badge" class="ml-auto bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full" x-text="menu.badge"></span>
+                    </a>
+                </template>
+            </nav>
+
+            <div class="p-4 border-t border-slate-100 relative" x-data="{ open: false }">
+                <div @click="open = !open" class="flex items-center gap-3 p-2 rounded-xl hover:bg-white/60 cursor-pointer transition">
+                    <img :src="user.avatar" class="w-10 h-10 rounded-full border-2 border-white shadow-sm object-cover">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-800 truncate" x-text="user.name"></p>
+                        <p class="text-xs text-slate-500 truncate" x-text="currentRole === 'student' ? 'Student ID: 2025' : 'Senior Instructor'"></p>
+                    </div>
+                    <i class="ph ph-caret-up text-slate-400"></i>
+                </div>
+                
+                <div x-show="open" @click.away="open = false" x-transition class="absolute bottom-20 left-4 w-64 glass-panel rounded-xl shadow-xl p-2 z-50">
+                    <a href="#" @click="navigate('profile'); open=false" class="block px-4 py-2 text-sm hover:bg-slate-100 rounded-lg text-slate-700">My Profile</a>
+                    <a href="#" @click="navigate('settings'); open=false" class="block px-4 py-2 text-sm hover:bg-slate-100 rounded-lg text-slate-700">Settings</a>
+                    <a href="#" class="block px-4 py-2 text-sm hover:bg-slate-100 rounded-lg text-slate-700">Billing & Plans</a>
+                    <div class="h-px bg-slate-200 my-1"></div>
+                    <a href="#" class="block px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg">Log Out</a>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+            
+            <header class="h-20 glass-panel border-b border-white/50 flex items-center justify-between px-6 lg:px-8 z-30 sticky top-0">
+                <div class="flex items-center gap-4">
+                    <!-- Mobile Menu Toggle Button -->
+                    <button @click="sidebarOpen = !sidebarOpen" 
+                            class="lg:hidden text-slate-500 p-2 hover:bg-white/50 rounded-lg">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                    <h2 class="text-lg lg:text-xl font-bold text-slate-800" x-text="getPageTitle()"></h2>
+                </div>
+
+                <div class="flex items-center gap-3 lg:gap-5">
+                    <div class="hidden md:flex items-center bg-white/80 rounded-full px-4 py-2 border border-slate-200 focus-within:ring-2 ring-brand-500/30 transition w-48 lg:w-64 shadow-sm">
+                        <i class="ph ph-magnifying-glass text-slate-400"></i>
+                        <input type="text" placeholder="Search..." class="bg-transparent border-none outline-none ml-2 text-sm w-full placeholder-slate-400">
+                    </div>
+                    
+                    <div class="relative" x-data="{ notifOpen: false }">
+                        <button @click="notifOpen = !notifOpen" class="relative w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition text-slate-600 shadow-sm">
+                            <i class="ph ph-bell text-xl"></i>
+                            <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full animate-pulse"></span>
+                        </button>
+                        <div x-show="notifOpen" @click.away="notifOpen = false" x-transition class="absolute right-0 top-12 w-80 glass-panel rounded-xl shadow-xl z-50 overflow-hidden">
+                            <div class="p-3 bg-slate-50 border-b border-slate-100 font-bold text-xs uppercase text-slate-500">Notifications (3)</div>
+                            <div class="max-h-64 overflow-y-auto">
+                                <div class="p-3 border-b border-slate-100 hover:bg-white cursor-pointer flex gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><i class="ph ph-info"></i></div>
+                                    <div><p class="text-xs font-bold">New Quiz Posted</p><p class="text-[10px] text-slate-500">Javascript Basic Quiz is live.</p></div>
+                                </div>
+                                <div class="p-3 border-b border-slate-100 hover:bg-white cursor-pointer flex gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0"><i class="ph ph-check"></i></div>
+                                    <div><p class="text-xs font-bold">Assignment Graded</p><p class="text-[10px] text-slate-500">Your UI Design task got 95/100.</p></div>
+                                </div>
+                                <div class="p-3 border-b border-slate-100 hover:bg-white cursor-pointer flex gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shrink-0"><i class="ph ph-calendar"></i></div>
+                                    <div><p class="text-xs font-bold">Live Class Reminder</p><p class="text-[10px] text-slate-500">React Advanced in 30 minutes.</p></div>
+                                </div>
+                                <div class="p-3 hover:bg-white cursor-pointer flex gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0"><i class="ph ph-award"></i></div>
+                                    <div><p class="text-xs font-bold">Certificate Earned</p><p class="text-[10px] text-slate-500">Python for Data Science completed.</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Search Button -->
+                    <button @click="mobileSearchOpen = !mobileSearchOpen" class="md:hidden w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition text-slate-600 shadow-sm">
+                        <i class="ph ph-magnifying-glass text-xl"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Mobile Search Bar -->
+            <div x-show="mobileSearchOpen" class="md:hidden p-3 glass-panel border-b border-slate-100">
+                <div class="flex items-center bg-white rounded-full px-4 py-2 border border-slate-200 focus-within:ring-2 ring-brand-500/30 transition w-full shadow-sm">
+                    <i class="ph ph-magnifying-glass text-slate-400"></i>
+                    <input type="text" placeholder="Search courses, assignments..." class="bg-transparent border-none outline-none ml-2 text-sm w-full placeholder-slate-400">
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 lg:p-10 scroll-smooth">
+                
+                <!-- Dashboard Page -->
+                <div x-show="currentPage === 'dashboard'" x-transition.opacity class="space-y-8">
+                    <div class="glass-card p-6 lg:p-8 bg-gradient-to-r from-brand-600 to-emerald-500 text-white relative overflow-hidden shadow-lg shadow-brand-500/20">
+                        <div class="relative z-10">
+                            <h1 class="text-2xl lg:text-3xl font-bold mb-2">Welcome back, <span x-text="user.firstName"></span>!</h1>
+                            <p class="text-brand-100 mb-6 max-w-xl">You have completed 75% of your weekly goal. Continue learning to maintain your streak.</p>
+                            <button @click="navigate('learning')" class="px-6 py-2.5 bg-white text-brand-700 rounded-xl font-bold shadow hover:bg-brand-50 transition">Resume Learning</button>
+                        </div>
+                        <i class="ph ph-rocket-launch absolute right-6 lg:right-10 top-1/2 -translate-y-1/2 text-6xl lg:text-9xl opacity-20 rotate-12"></i>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                        <template x-for="stat in studentStats" :key="stat.title">
+                            <div class="glass-card p-4 lg:p-5 flex items-center gap-4 hover:bg-white transition cursor-default">
+                                <div :class="`w-10 h-10 lg:w-12 lg:h-12 rounded-full ${stat.bg} ${stat.color} flex items-center justify-center text-xl lg:text-2xl`">
+                                    <i :class="stat.icon"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider" x-text="stat.title"></p>
+                                    <h3 class="text-lg lg:text-xl font-bold text-slate-800" x-text="stat.value"></h3>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                        <div class="glass-card p-4 lg:p-6 lg:col-span-2">
+                            <h3 class="font-bold text-lg text-slate-800 mb-4">Learning Activity</h3>
+                            <div id="learningChart"></div>
+                        </div>
+                        <div class="glass-card p-4 lg:p-6">
+                            <h3 class="font-bold text-lg text-slate-800 mb-4">Continue Learning</h3>
+                            <div class="space-y-4">
+                                <template x-for="course in inProgressCourses" :key="course.id">
+                                    <div class="p-3 bg-white/50 rounded-xl border border-slate-100 hover:shadow-md transition cursor-pointer group" @click="navigate('learning')">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <img :src="course.img" class="w-10 h-10 rounded-lg object-cover">
+                                            <div class="flex-1 min-w-0">
+                                                <h4 class="font-bold text-sm truncate group-hover:text-brand-600 transition" x-text="course.title"></h4>
+                                                <p class="text-xs text-slate-500" x-text="course.lesson"></p>
+                                            </div>
+                                            <i class="ph ph-play-circle text-2xl text-slate-400 group-hover:text-brand-600 transition"></i>
+                                        </div>
+                                        <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                                            <div class="h-full bg-brand-500" :style="`width: ${course.progress}%`"></div>
+                                        </div>
+                                    </div>
+                                </template>
+                                <button @click="navigate('courses')" class="w-full py-2.5 border border-dashed border-slate-300 text-slate-500 hover:text-brand-600 hover:border-brand-400 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
+                                    <i class="ph ph-plus"></i> Browse More Courses
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Courses Page -->
+                <div x-show="currentPage === 'courses'" x-transition.opacity class="space-y-6">
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <button class="px-4 py-2 bg-brand-600 text-white rounded-full text-xs font-bold shadow-lg shadow-brand-500/30">All Courses</button>
+                        <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-full text-xs font-bold hover:border-brand-500 hover:text-brand-600 transition">Development</button>
+                        <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-full text-xs font-bold hover:border-brand-500 hover:text-brand-600 transition">Design</button>
+                        <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-full text-xs font-bold hover:border-brand-500 hover:text-brand-600 transition">Business</button>
+                        <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-full text-xs font-bold hover:border-brand-500 hover:text-brand-600 transition">Data Science</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+                        <template x-for="course in courseCatalog" :key="course.id">
+                            <div class="glass-card overflow-hidden group cursor-pointer hover:shadow-xl transition duration-300">
+                                <div class="h-40 bg-slate-200 relative overflow-hidden">
+                                    <img :src="course.img" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                                    <div class="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-xs font-bold text-slate-800 flex items-center gap-1 shadow-sm">
+                                        <i class="ph ph-star-fill text-yellow-400"></i> <span x-text="course.rating"></span>
+                                    </div>
+                                </div>
+                                <div class="p-4 lg:p-5">
+                                    <span class="text-[10px] font-bold uppercase text-brand-600 bg-brand-50 px-2 py-0.5 rounded" x-text="course.cat"></span>
+                                    <h4 class="font-bold text-slate-800 mt-2 mb-1 leading-tight group-hover:text-brand-600 transition" x-text="course.title"></h4>
+                                    <p class="text-xs text-slate-500 mb-3">12 Lessons • 8 Hours</p>
+                                    
+                                    <div class="flex items-center justify-between border-t border-slate-100 pt-3 mt-4">
+                                        <div class="flex items-center gap-2">
+                                            <img :src="course.authorImg" class="w-6 h-6 rounded-full">
+                                            <span class="text-xs font-bold text-slate-600" x-text="course.author"></span>
+                                        </div>
+                                        <span class="font-bold text-slate-800" x-text="course.price"></span>
+                                    </div>
+                                    <button class="w-full mt-3 py-2 border border-brand-200 text-brand-700 rounded-lg text-xs font-bold hover:bg-brand-600 hover:text-white transition">Enroll Now</button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- My Learning Page -->
+                <div x-show="currentPage === 'learning'" x-transition.opacity class="space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">My Learning Journey</h2>
+                            <p class="text-slate-500">Track your progress and continue where you left off</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg text-sm font-bold hover:border-brand-500 hover:text-brand-600 transition flex items-center gap-2">
+                                <i class="ph ph-funnel"></i> Filter
+                            </button>
+                            <button class="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-bold shadow hover:bg-brand-700 transition">
+                                Continue All
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <template x-for="course in myCourses" :key="course.id">
+                            <div class="glass-card p-6 hover:shadow-lg transition cursor-pointer group">
+                                <div class="flex items-start gap-4 mb-4">
+                                    <img :src="course.img" class="w-16 h-16 rounded-xl object-cover">
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h3 class="font-bold text-lg text-slate-800 group-hover:text-brand-600 transition" x-text="course.title"></h3>
+                                                <p class="text-sm text-slate-500" x-text="course.instructor"></p>
+                                            </div>
+                                            <span :class="course.statusClass" class="px-2 py-1 rounded text-xs font-bold" x-text="course.status"></span>
+                                        </div>
+                                        <div class="mt-4">
+                                            <div class="flex justify-between text-xs text-slate-500 mb-1">
+                                                <span>Progress</span>
+                                                <span x-text="course.progress + '%'"></span>
+                                            </div>
+                                            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                                <div class="h-full bg-brand-500" :style="`width: ${course.progress}%`"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+                                    <div class="flex items-center gap-4 text-sm text-slate-500">
+                                        <span class="flex items-center gap-1"><i class="ph ph-clock"></i> <span x-text="course.duration"></span></span>
+                                        <span class="flex items-center gap-1"><i class="ph ph-video"></i> <span x-text="course.lessons"></span></span>
+                                    </div>
+                                    <button class="px-4 py-2 bg-brand-50 text-brand-700 rounded-lg text-sm font-bold hover:bg-brand-100 transition flex items-center gap-2">
+                                        <i class="ph ph-play-circle"></i> Continue
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="glass-card p-6">
+                        <h3 class="font-bold text-lg text-slate-800 mb-4">Learning Statistics</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            <div class="text-center p-4 bg-slate-50 rounded-xl">
+                                <p class="text-3xl font-bold text-brand-600">145</p>
+                                <p class="text-sm text-slate-500">Hours Learned</p>
+                            </div>
+                            <div class="text-center p-4 bg-slate-50 rounded-xl">
+                                <p class="text-3xl font-bold text-blue-600">42</p>
+                                <p class="text-sm text-slate-500">Quizzes Taken</p>
+                            </div>
+                            <div class="text-center p-4 bg-slate-50 rounded-xl">
+                                <p class="text-3xl font-bold text-purple-600">18</p>
+                                <p class="text-sm text-slate-500">Assignments Done</p>
+                            </div>
+                            <div class="text-center p-4 bg-slate-50 rounded-xl">
+                                <p class="text-3xl font-bold text-orange-600">8</p>
+                                <p class="text-sm text-slate-500">Certificates</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Class Page -->
+                <div x-show="currentPage === 'live'" x-transition.opacity class="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6 h-[calc(100vh-140px)]">
+                    <div class="lg:col-span-3 flex flex-col gap-4 h-full">
+                        <div class="flex-1 bg-black rounded-2xl relative overflow-hidden shadow-2xl border border-slate-200">
+                            <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=1200" class="w-full h-full object-cover opacity-80">
+                            <span class="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse flex items-center gap-1">
+                                <span class="w-2 h-2 bg-white rounded-full"></span> LIVE NOW
+                            </span>
+                            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-4">
+                                <button class="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur text-white flex items-center justify-center">
+                                    <i class="ph ph-microphone text-lg lg:text-xl"></i>
+                                </button>
+                                <button class="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur text-white flex items-center justify-center">
+                                    <i class="ph ph-video-camera text-lg lg:text-xl"></i>
+                                </button>
+                                <button class="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center shadow-lg">
+                                    <i class="ph ph-phone-disconnect text-lg lg:text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="glass-card p-4">
+                            <h3 class="font-bold text-slate-800 mb-2">React Advanced Patterns</h3>
+                            <p class="text-sm text-slate-500">Instructor: Dr. Angela • 45 students attending</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex flex-col h-[400px] lg:h-full overflow-hidden">
+                        <div class="p-4 border-b border-slate-200 bg-white/50 font-bold text-slate-700">Live Chat</div>
+                        <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-white/30">
+                            <template x-for="msg in liveMessages" :key="msg.id">
+                                <div class="flex gap-2">
+                                    <img :src="msg.avatar" class="w-6 h-6 rounded-full">
+                                    <div>
+                                        <p class="text-xs font-bold text-slate-700" x-text="msg.user"></p>
+                                        <p class="text-xs text-slate-600 bg-white p-2 rounded-tr-lg rounded-b-lg shadow-sm" x-text="msg.text"></p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="p-3 bg-white border-t border-slate-200">
+                            <div class="flex gap-2">
+                                <input type="text" placeholder="Type your message..." class="flex-1 bg-slate-100 rounded-full px-4 py-2 text-sm outline-none">
+                                <button class="w-10 h-10 rounded-full bg-brand-600 text-white flex items-center justify-center hover:bg-brand-700 transition">
+                                    <i class="ph ph-paper-plane-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assignments Page -->
+                <div x-show="currentPage === 'assignments'" x-transition.opacity class="space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <h2 class="text-2xl font-bold text-slate-800">Your Assignments</h2>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg text-sm font-bold hover:border-brand-500 hover:text-brand-600 transition">
+                                Filter by Status
+                            </button>
+                            <button class="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-bold shadow hover:bg-brand-700 transition">
+                                New Assignment
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-4">Assignment Name</th>
+                                        <th class="p-4">Course</th>
+                                        <th class="p-4">Deadline</th>
+                                        <th class="p-4">Status</th>
+                                        <th class="p-4 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="task in assignments" :key="task.id">
+                                        <tr class="border-b border-slate-100 hover:bg-white/50 transition">
+                                            <td class="p-4 font-bold text-slate-700" x-text="task.name"></td>
+                                            <td class="p-4 text-slate-500" x-text="task.course"></td>
+                                            <td class="p-4 text-slate-500" x-text="task.date"></td>
+                                            <td class="p-4">
+                                                <span :class="task.statusClass" class="px-2 py-1 rounded text-xs font-bold" x-text="task.status"></span>
+                                            </td>
+                                            <td class="p-4 text-right">
+                                                <button class="text-brand-600 hover:underline font-bold text-xs">View Details</button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Page -->
+                <div x-show="currentPage === 'quiz'" x-transition.opacity class="space-y-6">
+                    <div class="glass-card p-6 border-l-4 border-orange-500 bg-orange-50/50 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">JavaScript Final Assessment</h3>
+                            <p class="text-sm text-slate-500">20 Questions • 45 Minutes • Passing Score: 80%</p>
+                        </div>
+                        <button class="px-6 py-2 bg-orange-500 text-white rounded-lg font-bold shadow hover:bg-orange-600 transition">Start Quiz</button>
+                    </div>
+                    
+                    <h3 class="font-bold text-lg mt-8 mb-4">Past Results</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="glass-card p-4 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xl font-bold">A+</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">HTML5 Basics</h4>
+                                <p class="text-xs text-slate-500">Score: 98/100 • Passed • Dec 10, 2025</p>
+                            </div>
+                        </div>
+                        <div class="glass-card p-4 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold">B</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">CSS Flexbox</h4>
+                                <p class="text-xs text-slate-500">Score: 75/100 • Passed • Dec 5, 2025</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 mt-8">
+                        <h3 class="font-bold text-lg text-slate-800 mb-4">Upcoming Quizzes</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-white/50 rounded-lg">
+                                <div>
+                                    <h4 class="font-bold text-slate-700">React Hooks Quiz</h4>
+                                    <p class="text-xs text-slate-500">Due: Dec 18, 2025 • 15 Questions</p>
+                                </div>
+                                <button class="px-4 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200">Prepare</button>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-white/50 rounded-lg">
+                                <div>
+                                    <h4 class="font-bold text-slate-700">Node.js Fundamentals</h4>
+                                    <p class="text-xs text-slate-500">Due: Dec 20, 2025 • 25 Questions</p>
+                                </div>
+                                <button class="px-4 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200">Prepare</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Community Page -->
+                <div x-show="currentPage === 'community'" x-transition.opacity class="space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <h2 class="text-2xl font-bold text-slate-800">Discussion Forum</h2>
+                        <button class="px-4 py-2 bg-brand-600 text-white rounded-lg font-bold text-sm shadow hover:bg-brand-700 flex items-center gap-2">
+                            <i class="ph ph-plus"></i> Ask Question
+                        </button>
+                    </div>
+
+                    <div class="glass-card p-4">
+                        <div class="flex items-center gap-3 mb-6">
+                            <img :src="user.avatar" class="w-10 h-10 rounded-full">
+                            <input type="text" placeholder="Start a discussion..." class="flex-1 bg-slate-100 rounded-full px-4 py-2 text-sm outline-none">
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <template x-for="post in forumPosts" :key="post.id">
+                                <div class="glass-card p-5 hover:shadow-md transition cursor-pointer">
+                                    <div class="flex gap-4">
+                                        <div class="flex flex-col items-center gap-1 text-slate-400">
+                                            <i class="ph ph-caret-up text-2xl hover:text-brand-600 cursor-pointer"></i>
+                                            <span class="font-bold text-slate-700" x-text="post.votes"></span>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h3 class="font-bold text-lg text-slate-800 hover:text-brand-600 transition" x-text="post.title"></h3>
+                                            <div class="flex flex-wrap items-center gap-3 mt-2 text-xs text-slate-500">
+                                                <span class="px-2 py-0.5 bg-slate-200 rounded font-bold text-slate-600" x-text="post.tag"></span>
+                                                <span>by <span class="font-bold" x-text="post.author"></span></span>
+                                                <span x-text="post.time"></span>
+                                                <span class="flex items-center gap-1"><i class="ph ph-chat-circle"></i> <span x-text="post.replies"></span> Replies</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wallet Page -->
+                <div x-show="currentPage === 'wallet'" x-transition.opacity class="space-y-6">
+                    <div class="glass-card p-6 lg:p-8 bg-gradient-to-br from-slate-800 to-slate-900 text-white relative overflow-hidden shadow-xl">
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500 rounded-full blur-[80px] opacity-20"></div>
+                        <div class="relative z-10">
+                            <p class="text-slate-400 text-sm font-medium">Available Balance</p>
+                            <h1 class="text-3xl lg:text-4xl font-bold mt-1">$450.00</h1>
+                            <div class="flex flex-wrap gap-4 mt-6">
+                                <button class="px-6 py-2 bg-brand-500 hover:bg-brand-600 rounded-lg font-bold text-sm transition text-white">Add Funds</button>
+                                <button class="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg font-bold text-sm transition">Withdraw</button>
+                                <button class="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg font-bold text-sm transition">History</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="glass-card p-6 lg:col-span-2">
+                            <h3 class="font-bold text-lg mb-4 text-slate-800">Recent Transactions</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="bg-slate-50 text-slate-500 font-bold">
+                                        <tr>
+                                            <th class="p-3">Description</th>
+                                            <th class="p-3">Date</th>
+                                            <th class="p-3 text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-slate-100 hover:bg-white/50">
+                                            <td class="p-3 font-bold text-slate-700">Course: React Native</td>
+                                            <td class="p-3 text-slate-500">Dec 12, 2025</td>
+                                            <td class="p-3 text-right font-bold text-red-500">-$45.00</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-100 hover:bg-white/50">
+                                            <td class="p-3 font-bold text-slate-700">Refund: Python Basics</td>
+                                            <td class="p-3 text-slate-500">Dec 10, 2025</td>
+                                            <td class="p-3 text-right font-bold text-green-500">+$20.00</td>
+                                        </tr>
+                                        <tr class="border-b border-slate-100 hover:bg-white/50">
+                                            <td class="p-3 font-bold text-slate-700">Course: UI/UX Design</td>
+                                            <td class="p-3 text-slate-500">Dec 8, 2025</td>
+                                            <td class="p-3 text-right font-bold text-red-500">-$35.00</td>
+                                        </tr>
+                                        <tr class="hover:bg-white/50">
+                                            <td class="p-3 font-bold text-slate-700">Referral Bonus</td>
+                                            <td class="p-3 text-slate-500">Dec 5, 2025</td>
+                                            <td class="p-3 text-right font-bold text-green-500">+$15.00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="glass-card p-6">
+                            <h3 class="font-bold text-lg mb-4 text-slate-800">Payment Methods</h3>
+                            <div class="space-y-4">
+                                <div class="p-3 bg-white/50 rounded-xl border border-slate-200">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-6 bg-blue-600 rounded"></div>
+                                        <div>
+                                            <p class="font-bold text-sm">Visa •••• 4321</p>
+                                            <p class="text-xs text-slate-500">Expires 12/2027</p>
+                                        </div>
+                                        <span class="ml-auto text-xs font-bold text-green-600">Primary</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-white/50 rounded-xl border border-slate-200">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-6 bg-purple-600 rounded"></div>
+                                        <div>
+                                            <p class="font-bold text-sm">Mastercard •••• 8765</p>
+                                            <p class="text-xs text-slate-500">Expires 08/2026</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="w-full py-2.5 border border-dashed border-slate-300 text-slate-500 hover:text-brand-600 hover:border-brand-400 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
+                                    <i class="ph ph-plus"></i> Add New Method
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Page -->
+                <div x-show="currentPage === 'profile'" x-transition.opacity class="max-w-3xl mx-auto glass-card p-6 lg:p-8">
+                    <h2 class="text-2xl font-bold mb-6 text-slate-800">Account Settings</h2>
+                    
+                    <div class="flex flex-col lg:flex-row gap-8 mb-8">
+                        <div class="flex flex-col items-center">
+                            <img :src="user.avatar" class="w-32 h-32 rounded-full border-4 border-white shadow-lg mb-4">
+                            <button class="px-4 py-2 bg-brand-50 text-brand-700 rounded-lg text-sm font-bold hover:bg-brand-100 transition">
+                                Change Photo
+                            </button>
+                        </div>
+                        
+                        <div class="flex-1">
+                            <form class="space-y-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-600 mb-2">First Name</label>
+                                        <input type="text" x-model="user.firstName" class="w-full p-3 bg-white/50 border border-slate-200 rounded-xl outline-none focus:border-brand-500 transition">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-slate-600 mb-2">Last Name</label>
+                                        <input type="text" value="Rahman" class="w-full p-3 bg-white/50 border border-slate-200 rounded-xl outline-none focus:border-brand-500 transition">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-600 mb-2">Email</label>
+                                    <input type="email" value="ceo@projuktiplus.com" class="w-full p-3 bg-white/50 border border-slate-200 rounded-xl outline-none focus:border-brand-500 transition">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-600 mb-2">Phone Number</label>
+                                    <input type="tel" value="+880 1234 567890" class="w-full p-3 bg-white/50 border border-slate-200 rounded-xl outline-none focus:border-brand-500 transition">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-600 mb-2">Bio</label>
+                                    <textarea rows="4" class="w-full p-3 bg-white/50 border border-slate-200 rounded-xl outline-none focus:border-brand-500 transition">Instructor at ProjuktiPlus Academy with 5+ years of experience in web development and UX design.</textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-600 mb-2">Timezone</label>
+                                    <select class="w-full p-3 bg-white/50 border border-slate-200 rounded-xl outline-none focus:border-brand-500 transition">
+                                        <option>Asia/Dhaka (GMT+6)</option>
+                                        <option>UTC</option>
+                                        <option>America/New_York</option>
+                                    </select>
+                                </div>
+                                <div class="flex justify-end gap-3 pt-4">
+                                    <button type="button" class="px-6 py-2 border border-slate-300 rounded-xl text-slate-600 font-bold hover:bg-slate-50">Cancel</button>
+                                    <button type="button" class="px-6 py-2 bg-brand-600 text-white rounded-xl font-bold shadow hover:bg-brand-700">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructor Dashboard -->
+                <div x-show="currentPage === 'instructor_dashboard' && currentRole === 'instructor'" x-transition.opacity class="space-y-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                        <div class="glass-card p-6 border-b-4 border-brand-500">
+                            <p class="text-slate-500 text-xs font-bold uppercase">Total Revenue</p>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1">$14,500</h3>
+                            <p class="text-xs text-slate-500 mt-1">+12% from last month</p>
+                        </div>
+                        <div class="glass-card p-6 border-b-4 border-blue-500">
+                            <p class="text-slate-500 text-xs font-bold uppercase">Students</p>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1">1,204</h3>
+                            <p class="text-xs text-slate-500 mt-1">+45 new this week</p>
+                        </div>
+                        <div class="glass-card p-6 border-b-4 border-purple-500">
+                            <p class="text-slate-500 text-xs font-bold uppercase">Courses</p>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1">12</h3>
+                            <p class="text-xs text-slate-500 mt-1">3 published this month</p>
+                        </div>
+                        <div class="glass-card p-6 border-b-4 border-yellow-500">
+                            <p class="text-slate-500 text-xs font-bold uppercase">Rating</p>
+                            <h3 class="text-2xl font-bold text-slate-800 mt-1">4.9</h3>
+                            <p class="text-xs text-slate-500 mt-1">Based on 890 reviews</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card p-6 lg:p-8">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-slate-800">Sales Analytics</h3>
+                            <div class="flex gap-2 mt-2 lg:mt-0">
+                                <button class="px-3 py-1 bg-brand-50 text-brand-700 rounded-lg text-xs font-bold">Monthly</button>
+                                <button class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold">Yearly</button>
+                            </div>
+                        </div>
+                        <div id="salesChart"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass-card p-6">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4">Top Performing Courses</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-3 bg-white/50 rounded-lg">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 bg-brand-100 rounded-lg flex items-center justify-center text-brand-600">
+                                            <i class="ph ph-react-logo"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-sm">React Masterclass</h4>
+                                            <p class="text-xs text-slate-500">245 students</p>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold text-slate-800">$4,200</span>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-white/50 rounded-lg">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                                            <i class="ph ph-figma-logo"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-sm">Figma UI Design</h4>
+                                            <p class="text-xs text-slate-500">189 students</p>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold text-slate-800">$3,150</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-6">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4">Recent Reviews</h3>
+                            <div class="space-y-4">
+                                <div class="p-3 bg-white/50 rounded-lg">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <i class="ph ph-star-fill text-yellow-400"></i>
+                                        <i class="ph ph-star-fill text-yellow-400"></i>
+                                        <i class="ph ph-star-fill text-yellow-400"></i>
+                                        <i class="ph ph-star-fill text-yellow-400"></i>
+                                        <i class="ph ph-star-fill text-yellow-400"></i>
+                                    </div>
+                                    <p class="text-sm text-slate-700 mb-1">"Excellent course! The instructor explains complex topics in simple terms."</p>
+                                    <p class="text-xs text-slate-500">- Sarah Johnson</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manage Courses (Instructor) -->
+                <div x-show="currentPage === 'manage_courses' && currentRole === 'instructor'" x-transition.opacity class="space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <h2 class="text-2xl font-bold text-slate-800">Manage Courses</h2>
+                        <button class="px-4 py-2 bg-brand-600 text-white rounded-lg font-bold text-sm shadow hover:bg-brand-700 flex items-center gap-2">
+                            <i class="ph ph-plus"></i> Create New Course
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="glass-card p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-brand-100 rounded-xl flex items-center justify-center text-brand-600 text-2xl">
+                                    <i class="ph ph-react-logo"></i>
+                                </div>
+                                <span class="px-2 py-1 bg-green-100 text-green-600 text-xs font-bold rounded">Published</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-slate-800 mb-2">React Masterclass</h3>
+                            <p class="text-sm text-slate-500 mb-4">245 students • 4.9 rating</p>
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-slate-800">$89</span>
+                                <button class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200">Edit</button>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 text-2xl">
+                                    <i class="ph ph-figma-logo"></i>
+                                </div>
+                                <span class="px-2 py-1 bg-blue-100 text-blue-600 text-xs font-bold rounded">Draft</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-slate-800 mb-2">Figma UI Design</h3>
+                            <p class="text-sm text-slate-500 mb-4">189 students • 4.8 rating</p>
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-slate-800">$65</span>
+                                <button class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200">Edit</button>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 text-2xl">
+                                    <i class="ph ph-python-logo"></i>
+                                </div>
+                                <span class="px-2 py-1 bg-yellow-100 text-yellow-600 text-xs font-bold rounded">In Review</span>
+                            </div>
+                            <h3 class="font-bold text-lg text-slate-800 mb-2">Python for Beginners</h3>
+                            <p class="text-sm text-slate-500 mb-4">Coming soon</p>
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-slate-800">$49</span>
+                                <button class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-200">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students (Instructor) -->
+                <div x-show="currentPage === 'students' && currentRole === 'instructor'" x-transition.opacity class="space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <h2 class="text-2xl font-bold text-slate-800">Student Management</h2>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg text-sm font-bold hover:border-brand-500 hover:text-brand-600 transition">
+                                Export Data
+                            </button>
+                            <button class="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-bold shadow hover:bg-brand-700 transition">
+                                Add Student
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-4">Student Name</th>
+                                        <th class="p-4">Email</th>
+                                        <th class="p-4">Courses</th>
+                                        <th class="p-4">Progress</th>
+                                        <th class="p-4">Joined</th>
+                                        <th class="p-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="student in instructorStudents" :key="student.id">
+                                        <tr class="border-b border-slate-100 hover:bg-white/50 transition">
+                                            <td class="p-4">
+                                                <div class="flex items-center gap-3">
+                                                    <img :src="student.avatar" class="w-8 h-8 rounded-full">
+                                                    <span class="font-bold text-slate-700" x-text="student.name"></span>
+                                                </div>
+                                            </td>
+                                            <td class="p-4 text-slate-500" x-text="student.email"></td>
+                                            <td class="p-4 text-slate-500" x-text="student.courses"></td>
+                                            <td class="p-4">
+                                                <div class="w-24 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                                    <div class="h-full bg-brand-500" :style="`width: ${student.progress}%`"></div>
+                                                </div>
+                                            </td>
+                                            <td class="p-4 text-slate-500" x-text="student.joined"></td>
+                                            <td class="p-4 text-right">
+                                                <button class="text-brand-600 hover:underline font-bold text-xs">Message</button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function lmsApp() {
+            return {
+                sidebarOpen: false,
+                mobileSearchOpen: false,
+                currentRole: 'student',
+                currentPage: 'dashboard',
+                
+                user: { 
+                    name: 'Md. Nayemur Rahman', 
+                    firstName: 'Nayemur', 
+                    avatar: 'https://i.pravatar.cc/150?img=11' 
+                },
+
+                studentStats: [
+                    { title: 'Enrolled', value: '12 Courses', icon: 'ph-book-open', bg: 'bg-blue-100', color: 'text-blue-600' },
+                    { title: 'Time Spent', value: '145 Hours', icon: 'ph-clock', bg: 'bg-purple-100', color: 'text-purple-600' },
+                    { title: 'Certificates', value: '8 Earned', icon: 'ph-certificate', bg: 'bg-green-100', color: 'text-green-600' },
+                    { title: 'Points', value: '2400 XP', icon: 'ph-trophy', bg: 'bg-orange-100', color: 'text-orange-600' }
+                ],
+
+                inProgressCourses: [
+                    { id: 1, title: 'Advanced React Patterns', lesson: 'Lesson 5: Hooks', progress: 65, img: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=200' },
+                    { id: 2, title: 'UI/UX Principles 2025', lesson: 'Lesson 3: Color', progress: 30, img: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=200' }
+                ],
+
+                myCourses: [
+                    { id: 1, title: 'React Masterclass', instructor: 'Dr. Angela', progress: 85, duration: '12h', lessons: '24 Lessons', status: 'In Progress', statusClass: 'bg-blue-100 text-blue-600', img: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w-200' },
+                    { id: 2, title: 'Python for Data Science', instructor: 'Jane Smith', progress: 100, duration: '18h', lessons: '30 Lessons', status: 'Completed', statusClass: 'bg-green-100 text-green-600', img: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=200' },
+                    { id: 3, title: 'UI/UX Design Principles', instructor: 'Alex Johnson', progress: 45, duration: '8h', lessons: '16 Lessons', status: 'In Progress', statusClass: 'bg-blue-100 text-blue-600', img: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=200' },
+                    { id: 4, title: 'JavaScript Fundamentals', instructor: 'Mike Wilson', progress: 100, duration: '10h', lessons: '20 Lessons', status: 'Completed', statusClass: 'bg-green-100 text-green-600', img: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=200' }
+                ],
+
+                courseCatalog: [
+                    { id: 1, title: 'Web Development Bootcamp', cat: 'Dev', rating: 4.8, price: '$89', author: 'Dr. Angela', authorImg: 'https://i.pravatar.cc/150?img=5', img: 'https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=400' },
+                    { id: 2, title: 'Digital Marketing Mastery', cat: 'Marketing', rating: 4.7, price: '$49', author: 'John Doe', authorImg: 'https://i.pravatar.cc/150?img=3', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400' },
+                    { id: 3, title: 'Flutter for Mobile Apps', cat: 'Mobile', rating: 4.9, price: '$65', author: 'Jane S.', authorImg: 'https://i.pravatar.cc/150?img=9', img: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400' },
+                    { id: 4, title: 'Data Science with Python', cat: 'Data', rating: 4.6, price: '$95', author: 'Robert', authorImg: 'https://i.pravatar.cc/150?img=12', img: 'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=400' },
+                ],
+
+                assignments: [
+                    { id: 1, name: 'Build a Portfolio Website', course: 'Web Dev', date: 'Dec 15, 2025', status: 'Pending', statusClass: 'bg-yellow-100 text-yellow-600' },
+                    { id: 2, name: 'Mobile App Prototype', course: 'UI Design', date: 'Dec 12, 2025', status: 'Submitted', statusClass: 'bg-blue-100 text-blue-600' },
+                    { id: 3, name: 'Python Quiz 1', course: 'Data Science', date: 'Dec 10, 2025', status: 'Graded (A)', statusClass: 'bg-green-100 text-green-600' },
+                    { id: 4, name: 'Database Design Project', course: 'Backend Dev', date: 'Dec 18, 2025', status: 'Draft', statusClass: 'bg-slate-100 text-slate-600' },
+                ],
+
+                forumPosts: [
+                    { id: 1, title: 'How to fix useEffect dependency warning?', author: 'Alex M.', time: '2h ago', votes: 24, replies: 5, tag: 'React' },
+                    { id: 2, title: 'Best resources for learning Figma in 2025?', author: 'Sarah K.', time: '5h ago', votes: 15, replies: 12, tag: 'Design' },
+                    { id: 3, title: 'Python vs JavaScript for beginners?', author: 'Mike R.', time: '1d ago', votes: 32, replies: 8, tag: 'Programming' },
+                    { id: 4, title: 'How to prepare for technical interviews?', author: 'David L.', time: '2d ago', votes: 45, replies: 15, tag: 'Career' },
+                ],
+
+                liveMessages: [
+                    { id: 1, user: 'Instructor', text: 'Welcome everyone! We start in 5 mins.', avatar: 'https://i.pravatar.cc/150?img=11' },
+                    { id: 2, user: 'Student 1', text: 'Can we record this session?', avatar: 'https://i.pravatar.cc/150?img=3' },
+                    { id: 3, user: 'Student 2', text: 'Will the slides be available?', avatar: 'https://i.pravatar.cc/150?img=8' },
+                    { id: 4, user: 'Instructor', text: 'Yes, all materials will be shared after class.', avatar: 'https://i.pravatar.cc/150?img=11' },
+                ],
+
+                instructorStudents: [
+                    { id: 1, name: 'Sarah Johnson', email: 'sarah@email.com', courses: 4, progress: 85, joined: 'Oct 2025', avatar: 'https://i.pravatar.cc/150?img=1' },
+                    { id: 2, name: 'Mike Wilson', email: 'mike@email.com', courses: 2, progress: 45, joined: 'Nov 2025', avatar: 'https://i.pravatar.cc/150?img=2' },
+                    { id: 3, name: 'Emma Davis', email: 'emma@email.com', courses: 6, progress: 95, joined: 'Sep 2025', avatar: 'https://i.pravatar.cc/150?img=3' },
+                    { id: 4, name: 'John Smith', email: 'john@email.com', courses: 3, progress: 60, joined: 'Dec 2025', avatar: 'https://i.pravatar.cc/150?img=4' },
+                ],
+
+                get currentMenu() {
+                    if (this.currentRole === 'student') {
+                        return [
+                            { id: 'dashboard', label: 'Dashboard', icon: 'ph-squares-four' },
+                            { id: 'courses', label: 'Course Catalog', icon: 'ph-books' },
+                            { id: 'learning', label: 'My Learning', icon: 'ph-student' },
+                            { id: 'live', label: 'Live Class', icon: 'ph-video-camera', badge: 'LIVE' },
+                            { id: 'assignments', label: 'Assignments', icon: 'ph-clipboard-text' },
+                            { id: 'quiz', label: 'Quizzes', icon: 'ph-exam' },
+                            { id: 'community', label: 'Community', icon: 'ph-users-three' },
+                            { id: 'wallet', label: 'Wallet', icon: 'ph-wallet' },
+                            { id: 'profile', label: 'Profile', icon: 'ph-user' },
+                        ];
+                    } else {
+                        return [
+                            { id: 'instructor_dashboard', label: 'Instructor Home', icon: 'ph-chart-line-up' },
+                            { id: 'manage_courses', label: 'Manage Courses', icon: 'ph-video' },
+                            { id: 'students', label: 'Students', icon: 'ph-users' },
+                            { id: 'wallet', label: 'Earnings', icon: 'ph-wallet' },
+                            { id: 'profile', label: 'Profile', icon: 'ph-user' },
+                        ];
+                    }
+                },
+
+                navigate(pageId) {
+                    this.currentPage = pageId;
+                    this.sidebarOpen = false;
+                    this.mobileSearchOpen = false;
+                    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+                },
+
+                switchRole(role) {
+                    this.currentRole = role;
+                    this.currentPage = role === 'student' ? 'dashboard' : 'instructor_dashboard';
+                    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+                },
+
+                getPageTitle() {
+                    const item = this.currentMenu.find(i => i.id === this.currentPage);
+                    return item ? item.label : 'Dashboard';
+                },
+
+                initApp() {
+                    console.log('PlasicLMS Loaded');
+                    this.renderCharts();
+                    
+                    // Close mobile sidebar when clicking outside
+                    document.addEventListener('click', (event) => {
+                        const sidebar = document.querySelector('aside');
+                        const toggleButton = document.querySelector('button[class*="lg:hidden"]');
+                        
+                        if (window.innerWidth < 1024 && 
+                            this.sidebarOpen && 
+                            sidebar && 
+                            !sidebar.contains(event.target) && 
+                            toggleButton && 
+                            !toggleButton.contains(event.target)) {
+                            this.sidebarOpen = false;
+                        }
+                    });
+                    
+                    // Close on escape key
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && this.sidebarOpen) {
+                            this.sidebarOpen = false;
+                        }
+                    });
+                },
+
+                renderCharts() {
+                    // Learning Chart
+                    if (document.querySelector("#learningChart")) {
+                        new ApexCharts(document.querySelector("#learningChart"), {
+                            series: [{ name: 'Hours', data: [2, 4, 3, 6, 8, 5, 9] }],
+                            chart: { type: 'area', height: 280, toolbar: {show:false}, background: 'transparent' },
+                            colors: ['#10b981'], 
+                            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.6, opacityTo: 0.1 } },
+                            stroke: { curve: 'smooth', width: 2 },
+                            xaxis: { categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] },
+                            grid: { borderColor: '#e2e8f0', strokeDashArray: 4 }
+                        }).render();
+                    }
+
+                    // Sales Chart
+                    if (document.querySelector("#salesChart")) {
+                        new ApexCharts(document.querySelector("#salesChart"), {
+                            series: [{ name: 'Sales', data: [1200, 1900, 3000, 2500, 4200, 4800, 5500] }],
+                            chart: { type: 'bar', height: 300, toolbar: {show:false} },
+                            colors: ['#3b82f6'], 
+                            plotOptions: { bar: { borderRadius: 4, columnWidth: '40%' } },
+                            xaxis: { categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'] }
+                        }).render();
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
