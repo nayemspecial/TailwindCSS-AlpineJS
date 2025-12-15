@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - PlasicLMS</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 
+                            50: '#f0fdf4', 
+                            100: '#dcfce7', 
+                            500: '#22c55e', 
+                            600: '#16a34a', 
+                            700: '#15803d',
+                            800: '#166534'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; 
+            overflow-x: hidden; 
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #22c55e;
+            border-radius: 4px;
+        }
+
+        /* Form Input Focus */
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+
+        /* Background Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body x-data="signupApp()" x-init="init()">
+    <!-- Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-[-1]">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-brand-500 rounded-full blur-3xl opacity-5 floating-element"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500 rounded-full blur-3xl opacity-5 floating-element" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/3 w-64 h-64 bg-blue-500 rounded-full blur-3xl opacity-5 floating-element" style="animation-delay: 4s;"></div>
+    </div>
+
+    <div class="min-h-screen flex flex-col lg:flex-row">
+        <!-- Left Side - Branding & Info -->
+        <div class="lg:w-1/2 bg-gradient-to-br from-brand-600 to-emerald-500 text-white p-8 lg:p-12">
+            <!-- Back to Home -->
+            <a href="index.html" class="inline-flex items-center gap-2 text-white/80 hover:text-white transition mb-8">
+                <i class="ph ph-arrow-left"></i>
+                <span>Back to Home</span>
+            </a>
+
+            <!-- Logo -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                        <i class="ph ph-graduation-cap text-2xl"></i>
+                    </div>
+                    <span class="text-3xl font-black">PlasicLMS</span>
+                </div>
+                <p class="text-white/80">Join our community of 50,000+ learners</p>
+            </div>
+
+            <!-- Hero Content -->
+            <div class="max-w-lg">
+                <h1 class="text-4xl lg:text-5xl font-black mb-6">
+                    Start Your <span class="text-yellow-300">Learning Journey</span> Today
+                </h1>
+                <p class="text-xl mb-10 text-white/90">
+                    Create your free account and get instant access to hundreds of courses, live classes, and a supportive learning community.
+                </p>
+
+                <!-- Features List -->
+                <div class="space-y-6 mb-12">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                            <i class="ph ph-check-circle text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1">Free 7-Day Trial</h3>
+                            <p class="text-white/80">Access all premium features with no credit card required</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                            <i class="ph ph-video-camera text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1">500+ Courses</h3>
+                            <p class="text-white/80">Learn from industry experts with updated curriculum</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                            <i class="ph ph-certificate text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1">Get Certified</h3>
+                            <p class="text-white/80">Earn recognized certificates to boost your career</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                    <div class="flex items-center mb-4">
+                        <img src="https://i.pravatar.cc/150?img=5" class="w-12 h-12 rounded-full mr-4">
+                        <div>
+                            <h4 class="font-bold">Sarah Johnson</h4>
+                            <div class="flex text-yellow-300">
+                                <i class="ph ph-star-fill"></i>
+                                <i class="ph ph-star-fill"></i>
+                                <i class="ph ph-star-fill"></i>
+                                <i class="ph ph-star-fill"></i>
+                                <i class="ph ph-star-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-white/90 italic">
+                        "PlasicLMS completely transformed my career. The courses are well-structured and the instructors are amazing!"
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Signup Form -->
+        <div class="lg:w-1/2 p-8 lg:p-12 flex items-center justify-center">
+            <div class="w-full max-w-md">
+                <!-- Form Header -->
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-black text-slate-900 mb-2">Create Your Account</h2>
+                    <p class="text-slate-600">Join thousands of successful learners</p>
+                </div>
+
+                <!-- Progress Steps -->
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold">1</div>
+                        <div class="ml-2 text-sm font-medium text-slate-900">Account Info</div>
+                    </div>
+                    <div class="flex-1 h-1 bg-slate-200 mx-4"></div>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-500 flex items-center justify-center font-bold">2</div>
+                        <div class="ml-2 text-sm text-slate-500">Preferences</div>
+                    </div>
+                </div>
+
+                <!-- Social Signup -->
+                <div class="mb-8">
+                    <div class="grid grid-cols-2 gap-3">
+                        <button @click="signupWithGoogle" 
+                                class="flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 font-medium py-3 rounded-lg hover:border-slate-300 hover:bg-slate-50 transition">
+                            <i class="ph ph-google-logo text-red-500"></i>
+                            Google
+                        </button>
+                        <button @click="signupWithGithub"
+                                class="flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 font-medium py-3 rounded-lg hover:border-slate-300 hover:bg-slate-50 transition">
+                            <i class="ph ph-github-logo"></i>
+                            GitHub
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center my-6">
+                        <div class="flex-1 h-px bg-slate-200"></div>
+                        <span class="px-4 text-slate-500 text-sm">Or continue with email</span>
+                        <div class="flex-1 h-px bg-slate-200"></div>
+                    </div>
+                </div>
+
+                <!-- Signup Form -->
+                <form @submit.prevent="handleSignup" class="space-y-6">
+                    <!-- Name Fields -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                First Name *
+                            </label>
+                            <input type="text" 
+                                   x-model="form.firstName"
+                                   required
+                                   class="w-full form-input px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-brand-500 transition"
+                                   placeholder="John">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                Last Name *
+                            </label>
+                            <input type="text" 
+                                   x-model="form.lastName"
+                                   required
+                                   class="w-full form-input px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-brand-500 transition"
+                                   placeholder="Doe">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Email Address *
+                        </label>
+                        <input type="email" 
+                               x-model="form.email"
+                               required
+                               class="w-full form-input px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-brand-500 transition"
+                               placeholder="you@example.com">
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Password *
+                        </label>
+                        <div class="relative">
+                            <input :type="showPassword ? 'text' : 'password'" 
+                                   x-model="form.password"
+                                   required
+                                   class="w-full form-input px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-brand-500 transition pr-10"
+                                   placeholder="••••••••"
+                                   minlength="8">
+                            <button type="button" 
+                                    @click="showPassword = !showPassword"
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                <i :class="showPassword ? 'ph ph-eye-slash' : 'ph ph-eye'"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2">Must be at least 8 characters with letters and numbers</p>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Confirm Password *
+                        </label>
+                        <div class="relative">
+                            <input :type="showConfirmPassword ? 'text' : 'password'" 
+                                   x-model="form.confirmPassword"
+                                   required
+                                   class="w-full form-input px-4 py-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-brand-500 transition pr-10"
+                                   placeholder="••••••••">
+                            <button type="button" 
+                                    @click="showConfirmPassword = !showConfirmPassword"
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                <i :class="showConfirmPassword ? 'ph ph-eye-slash' : 'ph ph-eye'"></i>
+                            </button>
+                        </div>
+                        <p x-show="form.password && form.confirmPassword && form.password !== form.confirmPassword" 
+                           class="text-xs text-red-500 mt-2">
+                            Passwords do not match
+                        </p>
+                    </div>
+
+                    <!-- User Type -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-3">
+                            I am signing up as a *
+                        </label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center p-4 border-2 border-slate-200 rounded-lg cursor-pointer hover:border-brand-500 transition"
+                                   :class="form.userType === 'student' ? 'border-brand-500 bg-brand-50' : ''">
+                                <input type="radio" 
+                                       name="userType" 
+                                       value="student" 
+                                       x-model="form.userType"
+                                       class="sr-only">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                                        <i class="ph ph-student"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium">Student</div>
+                                        <div class="text-xs text-slate-500">Learn new skills</div>
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-center p-4 border-2 border-slate-200 rounded-lg cursor-pointer hover:border-brand-500 transition"
+                                   :class="form.userType === 'instructor' ? 'border-brand-500 bg-brand-50' : ''">
+                                <input type="radio" 
+                                       name="userType" 
+                                       value="instructor" 
+                                       x-model="form.userType"
+                                       class="sr-only">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
+                                        <i class="ph ph-chalkboard-teacher"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium">Instructor</div>
+                                        <div class="text-xs text-slate-500">Teach courses</div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Terms & Conditions -->
+                    <div>
+                        <label class="flex items-start">
+                            <input type="checkbox" 
+                                   x-model="form.acceptTerms"
+                                   required
+                                   class="mt-1 mr-3 rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                            <span class="text-sm text-slate-600">
+                                I agree to the 
+                                <a href="terms.html" class="text-brand-600 hover:text-brand-700 font-medium">Terms of Service</a> 
+                                and 
+                                <a href="privacy.html" class="text-brand-600 hover:text-brand-700 font-medium">Privacy Policy</a>.
+                                I understand that I can cancel my trial anytime.
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Marketing Consent -->
+                    <div>
+                        <label class="flex items-start">
+                            <input type="checkbox" 
+                                   x-model="form.marketingConsent"
+                                   class="mt-1 mr-3 rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                            <span class="text-sm text-slate-600">
+                                I want to receive updates about new courses, special offers, and learning tips via email.
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit"
+                            :disabled="loading || (form.password && form.confirmPassword && form.password !== form.confirmPassword)"
+                            :class="loading ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-lg'"
+                            class="w-full bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold py-4 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5">
+                        <span x-show="!loading">Create Account & Start Free Trial</span>
+                        <span x-show="loading" class="flex items-center justify-center gap-2">
+                            <i class="ph ph-circle-notch animate-spin"></i>
+                            Creating Account...
+                        </span>
+                    </button>
+
+                    <!-- Already have account -->
+                    <div class="text-center">
+                        <p class="text-slate-600">
+                            Already have an account? 
+                            <a href="login.html" class="text-brand-600 hover:text-brand-700 font-medium">
+                                Sign in here
+                            </a>
+                        </p>
+                    </div>
+                </form>
+
+                <!-- Security Info -->
+                <div class="mt-8 pt-8 border-t border-slate-200">
+                    <div class="flex items-center justify-center gap-6 text-sm text-slate-500">
+                        <div class="flex items-center gap-2">
+                            <i class="ph ph-lock text-green-500"></i>
+                            <span>Secure & Encrypted</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="ph ph-shield-check text-blue-500"></i>
+                            <span>Privacy Protected</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="ph ph-credit-card text-purple-500"></i>
+                            <span>No Card Required</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div x-show="showSuccessModal" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div @click.away="showSuccessModal = false" 
+             class="bg-white rounded-2xl p-8 max-w-md w-full">
+            <div class="text-center">
+                <div class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
+                    <i class="ph ph-check-circle text-4xl text-green-600"></i>
+                </div>
+                
+                <h3 class="text-2xl font-black text-slate-900 mb-4">Account Created Successfully!</h3>
+                <p class="text-slate-600 mb-8">
+                    Welcome to PlasicLMS, <span x-text="form.firstName" class="font-bold text-brand-600"></span>! 
+                    Your 7-day free trial has started. Check your email to verify your account.
+                </p>
+                
+                <div class="space-y-4">
+                    <a href="dashboard.html" 
+                       class="block w-full bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold py-3 rounded-lg hover:shadow-lg transition">
+                        Go to Dashboard
+                    </a>
+                    <a href="courses.html" 
+                       class="block w-full bg-white border-2 border-slate-200 text-slate-800 font-bold py-3 rounded-lg hover:border-brand-500 hover:text-brand-600 transition">
+                        Browse Courses
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function signupApp() {
+            return {
+                // Form Data
+                form: {
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    password: '',
+                    confirmPassword: '',
+                    userType: 'student',
+                    acceptTerms: false,
+                    marketingConsent: false
+                },
+                
+                // UI State
+                showPassword: false,
+                showConfirmPassword: false,
+                loading: false,
+                showSuccessModal: false,
+                
+                // Methods
+                init() {
+                    console.log('Signup page initialized');
+                },
+                
+                async handleSignup() {
+                    // Validate password match
+                    if (this.form.password !== this.form.confirmPassword) {
+                        alert('Passwords do not match!');
+                        return;
+                    }
+                    
+                    // Validate password strength
+                    if (this.form.password.length < 8) {
+                        alert('Password must be at least 8 characters long');
+                        return;
+                    }
+                    
+                    // Validate terms acceptance
+                    if (!this.form.acceptTerms) {
+                        alert('You must accept the Terms of Service and Privacy Policy');
+                        return;
+                    }
+                    
+                    // Start loading
+                    this.loading = true;
+                    
+                    try {
+                        // Simulate API call
+                        await new Promise(resolve => setTimeout(resolve, 1500));
+                        
+                        // In a real app, you would send the data to your backend here
+                        console.log('Signup data:', this.form);
+                        
+                        // Show success modal
+                        this.showSuccessModal = true;
+                        
+                        // Reset form (optional)
+                        // this.resetForm();
+                        
+                    } catch (error) {
+                        console.error('Signup error:', error);
+                        alert('Signup failed. Please try again.');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                
+                signupWithGoogle() {
+                    this.loading = true;
+                    // Simulate Google OAuth
+                    setTimeout(() => {
+                        alert('Google signup would be implemented here');
+                        this.loading = false;
+                    }, 1000);
+                },
+                
+                signupWithGithub() {
+                    this.loading = true;
+                    // Simulate GitHub OAuth
+                    setTimeout(() => {
+                        alert('GitHub signup would be implemented here');
+                        this.loading = false;
+                    }, 1000);
+                },
+                
+                resetForm() {
+                    this.form = {
+                        firstName: '',
+                        lastName: '',
+                        email: '',
+                        password: '',
+                        confirmPassword: '',
+                        userType: 'student',
+                        acceptTerms: false,
+                        marketingConsent: false
+                    };
+                    this.showPassword = false;
+                    this.showConfirmPassword = false;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
