@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Courses - PlasicLMS</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 
+                            50: '#f0fdf4', 
+                            100: '#dcfce7', 
+                            500: '#22c55e', 
+                            600: '#16a34a', 
+                            700: '#15803d',
+                            800: '#166534'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #ffffff; 
+            overflow-x: hidden; 
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #22c55e;
+            border-radius: 4px;
+        }
+
+        /* Course Card Animation */
+        .course-card {
+            transition: all 0.3s ease;
+        }
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Checkbox Styling */
+        .category-checkbox:checked + .category-label {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+            color: #166534;
+        }
+
+        /* Loading Animation */
+        .loader {
+            border: 3px solid #f1f5f9;
+            border-top: 3px solid #22c55e;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body x-data="coursesApp()" x-init="init()">
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-white border-b border-slate-200">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between py-4">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center">
+                        <i class="ph ph-graduation-cap text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-black text-slate-900">PlasicLMS</span>
+                </a>
+
+                <!-- Navigation Links -->
+                <div class="hidden lg:flex items-center gap-8">
+                    <a href="index.html" class="text-slate-700 hover:text-brand-600 font-semibold transition">Home</a>
+                    <a href="courses.html" class="text-brand-600 font-semibold">Courses</a>
+                    <a href="pricing.html" class="text-slate-700 hover:text-brand-600 font-semibold transition">Pricing</a>
+                    <a href="about.html" class="text-slate-700 hover:text-brand-600 font-semibold transition">About</a>
+                    <a href="contact.html" class="text-slate-700 hover:text-brand-600 font-semibold transition">Contact</a>
+                </div>
+
+                <!-- Auth Buttons -->
+                <div class="flex items-center gap-4">
+                    <a href="login.html" class="text-slate-700 hover:text-brand-600 font-semibold px-4 py-2 transition">
+                        Sign In
+                    </a>
+                    <a href="signup.html" class="bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-brand-500/30 transition">
+                        Get Started
+                    </a>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden text-slate-700 p-2">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false" 
+         class="lg:hidden fixed inset-0 z-40 bg-white pt-20" x-transition>
+        <div class="container mx-auto px-6 py-8">
+            <div class="space-y-6">
+                <a href="index.html" @click="mobileMenuOpen = false" class="block text-lg font-semibold text-slate-800 hover:text-brand-600 py-2">Home</a>
+                <a href="courses.html" @click="mobileMenuOpen = false" class="block text-lg font-semibold text-brand-600 py-2">Courses</a>
+                <a href="pricing.html" @click="mobileMenuOpen = false" class="block text-lg font-semibold text-slate-800 hover:text-brand-600 py-2">Pricing</a>
+                <a href="about.html" @click="mobileMenuOpen = false" class="block text-lg font-semibold text-slate-800 hover:text-brand-600 py-2">About</a>
+                <a href="contact.html" @click="mobileMenuOpen = false" class="block text-lg font-semibold text-slate-800 hover:text-brand-600 py-2">Contact</a>
+                
+                <div class="pt-6 border-t border-slate-200 space-y-4">
+                    <a href="login.html" class="block text-center text-lg font-semibold text-slate-800 hover:text-brand-600 py-3">Sign In</a>
+                    <a href="signup.html" class="block text-center bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold rounded-xl py-3 hover:shadow-lg">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-brand-50 to-emerald-50 py-12 lg:py-16">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl lg:text-5xl font-black text-slate-900 mb-6">
+                    Discover <span class="text-brand-600">500+ Courses</span> to Master New Skills
+                </h1>
+                <p class="text-xl text-slate-600 mb-8">
+                    Learn from industry experts with hands-on projects, live sessions, and career support
+                </p>
+                
+                <!-- Search Bar -->
+                <div class="max-w-2xl mx-auto mb-8">
+                    <div class="relative">
+                        <input type="text" 
+                               x-model="searchQuery"
+                               @input="filterCourses"
+                               placeholder="Search for courses, topics, or instructors..."
+                               class="w-full px-6 py-4 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-brand-500 pr-12 text-lg">
+                        <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400">
+                            <i class="ph ph-magnifying-glass text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="flex flex-wrap justify-center gap-8">
+                    <div class="text-center">
+                        <div class="text-2xl font-black text-brand-600">500+</div>
+                        <div class="text-slate-600">Courses</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-black text-blue-600">200+</div>
+                        <div class="text-slate-600">Expert Instructors</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-black text-purple-600">50K+</div>
+                        <div class="text-slate-600">Students Enrolled</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-black text-orange-600">4.8/5</div>
+                        <div class="text-slate-600">Average Rating</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-8 lg:py-12">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar Filters -->
+            <div class="lg:w-1/4">
+                <div class="bg-white rounded-xl border border-slate-200 p-6 sticky top-24">
+                    <h3 class="text-lg font-bold text-slate-900 mb-6">Filter Courses</h3>
+                    
+                    <!-- Categories -->
+                    <div class="mb-8">
+                        <h4 class="font-semibold text-slate-800 mb-4">Categories</h4>
+                        <div class="space-y-3">
+                            <template x-for="category in categories" :key="category.id">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" 
+                                           :value="category.id"
+                                           x-model="selectedCategories"
+                                           @change="filterCourses"
+                                           class="sr-only category-checkbox">
+                                    <div class="category-label flex-1 flex items-center justify-between px-4 py-3 border-2 border-slate-200 rounded-lg hover:border-slate-300 transition">
+                                        <div class="flex items-center gap-3">
+                                            <div :class="`w-8 h-8 rounded-lg ${category.color} flex items-center justify-center`">
+                                                <i :class="category.icon"></i>
+                                            </div>
+                                            <span class="font-medium" x-text="category.name"></span>
+                                        </div>
+                                        <span class="text-sm text-slate-500" x-text="category.count"></span>
+                                    </div>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                    
+                    <!-- Price Range -->
+                    <div class="mb-8">
+                        <h4 class="font-semibold text-slate-800 mb-4">Price Range</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="radio" name="price" value="all" x-model="priceFilter" @change="filterCourses" class="mr-3">
+                                <span>All Prices</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="price" value="free" x-model="priceFilter" @change="filterCourses" class="mr-3">
+                                <span>Free</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="price" value="paid" x-model="priceFilter" @change="filterCourses" class="mr-3">
+                                <span>Paid</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Difficulty Level -->
+                    <div class="mb-8">
+                        <h4 class="font-semibold text-slate-800 mb-4">Difficulty Level</h4>
+                        <div class="space-y-3">
+                            <template x-for="level in difficultyLevels" :key="level.id">
+                                <label class="flex items-center">
+                                    <input type="checkbox" 
+                                           :value="level.id"
+                                           x-model="selectedLevels"
+                                           @change="filterCourses"
+                                           class="mr-3">
+                                    <span x-text="level.name"></span>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                    
+                    <!-- Duration -->
+                    <div class="mb-8">
+                        <h4 class="font-semibold text-slate-800 mb-4">Duration</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" value="short" x-model="selectedDurations" @change="filterCourses" class="mr-3">
+                                <span>Short (0-5 hours)</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" value="medium" x-model="selectedDurations" @change="filterCourses" class="mr-3">
+                                <span>Medium (5-20 hours)</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" value="long" x-model="selectedDurations" @change="filterCourses" class="mr-3">
+                                <span>Long (20+ hours)</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Reset Filters -->
+                    <button @click="resetFilters" 
+                            class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-medium py-3 rounded-lg transition">
+                        Reset All Filters
+                    </button>
+                </div>
+                
+                <!-- Promo Banner -->
+                <div class="mt-8 bg-gradient-to-br from-brand-600 to-emerald-500 text-white rounded-xl p-6">
+                    <h4 class="font-bold text-lg mb-3">Start Learning Free</h4>
+                    <p class="text-sm mb-4">Get 7-day free trial with access to all premium courses</p>
+                    <a href="signup.html" class="inline-block w-full bg-white text-brand-600 font-bold text-center py-3 rounded-lg hover:bg-slate-100 transition">
+                        Try Free
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Courses Grid -->
+            <div class="lg:w-3/4">
+                <!-- Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">
+                            <span x-text="filteredCourses.length"></span> Courses Found
+                        </h2>
+                        <p class="text-slate-600" x-show="selectedCategories.length > 0 || searchQuery">
+                            Filtered by 
+                            <span x-show="selectedCategories.length > 0" class="font-medium">
+                                <span x-text="selectedCategories.length"></span> categories
+                            </span>
+                            <span x-show="searchQuery && selectedCategories.length > 0">, </span>
+                            <span x-show="searchQuery" class="font-medium">
+                                search: "<span x-text="searchQuery"></span>"
+                            </span>
+                        </p>
+                    </div>
+                    
+                    <!-- Sort Options -->
+                    <div class="flex items-center gap-4">
+                        <span class="text-slate-600">Sort by:</span>
+                        <select x-model="sortBy" @change="filterCourses" class="bg-white border border-slate-200 rounded-lg px-4 py-2 focus:outline-none focus:border-brand-500">
+                            <option value="popular">Most Popular</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="newest">Newest</option>
+                            <option value="price_low">Price: Low to High</option>
+                            <option value="price_high">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Loading State -->
+                <div x-show="loading" class="text-center py-12">
+                    <div class="loader w-12 h-12 mx-auto mb-4"></div>
+                    <p class="text-slate-600">Loading courses...</p>
+                </div>
+                
+                <!-- No Results -->
+                <div x-show="!loading && filteredCourses.length === 0" class="text-center py-12">
+                    <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="ph ph-magnifying-glass text-3xl text-slate-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">No courses found</h3>
+                    <p class="text-slate-600 mb-6">Try changing your filters or search terms</p>
+                    <button @click="resetFilters" 
+                            class="bg-brand-600 hover:bg-brand-700 text-white font-medium px-6 py-3 rounded-lg transition">
+                        Reset Filters
+                    </button>
+                </div>
+                
+                <!-- Courses Grid -->
+                <div x-show="!loading && filteredCourses.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                    <template x-for="course in filteredCourses" :key="course.id">
+                        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden course-card">
+                            <!-- Course Image -->
+                            <div class="h-48 relative overflow-hidden">
+                                <div :class="`h-full ${course.bgColor}`"></div>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <i :class="course.icon + ' text-6xl text-white opacity-30'"></i>
+                                </div>
+                                
+                                <!-- Course Badges -->
+                                <div class="absolute top-4 left-4">
+                                    <span :class="`px-3 py-1 rounded-full text-xs font-bold ${course.levelColor}`" 
+                                          x-text="course.level"></span>
+                                </div>
+                                <div class="absolute top-4 right-4">
+                                    <span x-show="course.isBestseller" 
+                                          class="px-3 py-1 bg-orange-500 text-white rounded-full text-xs font-bold">
+                                        Bestseller
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Course Info -->
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <span :class="`px-2 py-1 ${course.categoryColor} text-xs font-bold rounded`" 
+                                              x-text="course.category"></span>
+                                        <h3 class="text-xl font-bold text-slate-900 mt-2 mb-1" x-text="course.title"></h3>
+                                        <p class="text-slate-600 text-sm" x-text="course.description"></p>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-2xl font-black text-brand-600" x-text="course.price === 0 ? 'Free' : '$' + course.price"></div>
+                                        <div class="text-sm text-slate-500" x-text="course.duration"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Instructor Info -->
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <img :src="course.instructor.avatar" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <div class="text-sm font-medium text-slate-900" x-text="course.instructor.name"></div>
+                                            <div class="text-xs text-slate-500" x-text="course.instructor.title"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <i class="ph ph-star-fill text-yellow-400"></i>
+                                        <span class="font-bold text-slate-900" x-text="course.rating"></span>
+                                        <span class="text-slate-500 text-sm">(<span x-text="course.reviews"></span>)</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Course Stats -->
+                                <div class="flex items-center justify-between text-sm text-slate-600 mb-6">
+                                    <div class="flex items-center gap-1">
+                                        <i class="ph ph-users"></i>
+                                        <span x-text="course.students + ' students'"></span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <i class="ph ph-video"></i>
+                                        <span x-text="course.lessons + ' lessons'"></span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <i class="ph ph-certificate"></i>
+                                        <span x-text="course.certificate ? 'Certificate' : 'No certificate'"></span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Action Buttons -->
+                                <div class="flex gap-3">
+                                    <a :href="'course-detail.html?id=' + course.id" 
+                                       class="flex-1 bg-white border-2 border-brand-600 text-brand-600 font-bold py-3 rounded-lg text-center hover:bg-brand-50 transition">
+                                        View Details
+                                    </a>
+                                    <a href="signup.html" 
+                                       class="flex-1 bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold py-3 rounded-lg text-center hover:shadow-lg transition">
+                                        Enroll Now
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                
+                <!-- Load More -->
+                <div x-show="!loading && filteredCourses.length > 0 && filteredCourses.length < totalCourses" 
+                     class="text-center mt-12">
+                    <button @click="loadMoreCourses" 
+                            :disabled="loadingMore"
+                            :class="loadingMore ? 'opacity-70 cursor-not-allowed' : ''"
+                            class="bg-white border-2 border-slate-200 text-slate-800 font-bold px-8 py-3 rounded-lg hover:border-brand-500 hover:text-brand-600 transition">
+                        <span x-show="!loadingMore">Load More Courses</span>
+                        <span x-show="loadingMore" class="flex items-center gap-2">
+                            <div class="loader w-5 h-5"></div>
+                            Loading...
+                        </span>
+                    </button>
+                </div>
+                
+                <!-- Pagination -->
+                <div x-show="!loading && filteredCourses.length > 0 && totalPages > 1" 
+                     class="flex justify-center mt-12">
+                    <div class="flex items-center gap-2">
+                        <button @click="prevPage" 
+                                :disabled="currentPage === 1"
+                                class="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 hover:border-brand-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="ph ph-caret-left"></i>
+                        </button>
+                        
+                        <template x-for="page in getVisiblePages()" :key="page">
+                            <button @click="goToPage(page)"
+                                    :class="currentPage === page ? 'bg-brand-600 text-white' : 'bg-white text-slate-700 hover:border-brand-500'"
+                                    class="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 font-medium">
+                                <span x-text="page"></span>
+                            </button>
+                        </template>
+                        
+                        <button @click="nextPage" 
+                                :disabled="currentPage === totalPages"
+                                class="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 hover:border-brand-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="ph ph-caret-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <section class="bg-gradient-to-r from-slate-900 to-slate-800 text-white py-16">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl lg:text-4xl font-black mb-6">Ready to Start Learning?</h2>
+            <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+                Join thousands of students who are transforming their careers with PlasicLMS
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="signup.html" 
+                   class="px-8 py-4 bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold rounded-xl hover:shadow-2xl transition">
+                    Start Free Trial
+                    <i class="ph ph-arrow-right ml-2"></i>
+                </a>
+                <a href="pricing.html" 
+                   class="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white font-bold rounded-xl hover:bg-white/20 transition">
+                    View Pricing Plans
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-50 py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center">
+                            <i class="ph ph-graduation-cap text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-black text-slate-900">PlasicLMS</span>
+                    </div>
+                    <p class="text-slate-600 mb-6">
+                        Empowering learners worldwide with quality online education.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-6">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="index.html" class="text-slate-600 hover:text-brand-600 transition">Home</a></li>
+                        <li><a href="courses.html" class="text-slate-600 hover:text-brand-600 transition">All Courses</a></li>
+                        <li><a href="pricing.html" class="text-slate-600 hover:text-brand-600 transition">Pricing</a></li>
+                        <li><a href="about.html" class="text-slate-600 hover:text-brand-600 transition">About Us</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-6">Resources</h4>
+                    <ul class="space-y-3">
+                        <li><a href="blog.html" class="text-slate-600 hover:text-brand-600 transition">Blog</a></li>
+                        <li><a href="help.html" class="text-slate-600 hover:text-brand-600 transition">Help Center</a></li>
+                        <li><a href="faq.html" class="text-slate-600 hover:text-brand-600 transition">FAQ</a></li>
+                        <li><a href="contact.html" class="text-slate-600 hover:text-brand-600 transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-slate-900 mb-6">Legal</h4>
+                    <ul class="space-y-3">
+                        <li><a href="privacy.html" class="text-slate-600 hover:text-brand-600 transition">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="text-slate-600 hover:text-brand-600 transition">Terms of Service</a></li>
+                        <li><a href="cookies.html" class="text-slate-600 hover:text-brand-600 transition">Cookie Policy</a></li>
+                        <li><a href="refund.html" class="text-slate-600 hover:text-brand-600 transition">Refund Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-200 mt-12 pt-8 text-center text-slate-600">
+                <p>&copy; 2024 PlasicLMS. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function coursesApp() {
+            return {
+                // UI State
+                mobileMenuOpen: false,
+                loading: false,
+                loadingMore: false,
+                
+                // Filter State
+                searchQuery: '',
+                selectedCategories: [],
+                priceFilter: 'all',
+                selectedLevels: [],
+                selectedDurations: [],
+                sortBy: 'popular',
+                
+                // Pagination
+                currentPage: 1,
+                coursesPerPage: 8,
+                totalCourses: 0,
+                
+                // Data
+                allCourses: [
+                    // Web Development
+                    {
+                        id: 1,
+                        title: "Complete Web Development Bootcamp 2025",
+                        description: "Master HTML, CSS, JavaScript, React, Node.js and become a full-stack developer",
+                        category: "Web Development",
+                        categoryColor: "bg-blue-100 text-blue-800",
+                        bgColor: "bg-gradient-to-br from-blue-500 to-blue-700",
+                        icon: "ph ph-code",
+                        level: "Beginner",
+                        levelColor: "bg-blue-100 text-blue-800",
+                        price: 89,
+                        duration: "48 hours",
+                        instructor: {
+                            name: "Dr. Angela Yu",
+                            title: "Lead Instructor",
+                            avatar: "https://i.pravatar.cc/150?img=5"
+                        },
+                        rating: 4.9,
+                        reviews: 3245,
+                        students: 18500,
+                        lessons: 42,
+                        certificate: true,
+                        isBestseller: true,
+                        difficulty: "beginner",
+                        durationType: "long"
+                    },
+                    {
+                        id: 2,
+                        title: "Advanced React Patterns & Best Practices",
+                        description: "Master advanced React concepts, performance optimization, and modern patterns",
+                        category: "Web Development",
+                        categoryColor: "bg-blue-100 text-blue-800",
+                        bgColor: "bg-gradient-to-br from-blue-400 to-blue-600",
+                        icon: "ph ph-react-logo",
+                        level: "Advanced",
+                        levelColor: "bg-purple-100 text-purple-800",
+                        price: 74,
+                        duration: "24 hours",
+                        instructor: {
+                            name: "Maximilian Schwarzmüller",
+                            title: "React Expert",
+                            avatar: "https://i.pravatar.cc/150?img=6"
+                        },
+                        rating: 4.8,
+                        reviews: 1890,
+                        students: 12400,
+                        lessons: 28,
+                        certificate: true,
+                        isBestseller: false,
+                        difficulty: "advanced",
+                        durationType: "medium"
+                    },
+                    
+                    // Data Science
+                    {
+                        id: 3,
+                        title: "Python for Data Science & Machine Learning",
+                        description: "Complete guide to data analysis, visualization, and ML with Python",
+                        category: "Data Science",
+                        categoryColor: "bg-green-100 text-green-800",
+                        bgColor: "bg-gradient-to-br from-green-500 to-green-700",
+                        icon: "ph ph-python-logo",
+                        level: "Intermediate",
+                        levelColor: "bg-yellow-100 text-yellow-800",
+                        price: 79,
+                        duration: "36 hours",
+                        instructor: {
+                            name: "Jose Portilla",
+                            title: "Data Science Lead",
+                            avatar: "https://i.pravatar.cc/150?img=7"
+                        },
+                        rating: 4.7,
+                        reviews: 2560,
+                        students: 16800,
+                        lessons: 32,
+                        certificate: true,
+                        isBestseller: true,
+                        difficulty: "intermediate",
+                        durationType: "medium"
+                    },
+                    {
+                        id: 4,
+                        title: "SQL Masterclass - Complete SQL Bootcamp",
+                        description: "Master SQL from basic to advanced queries, optimization, and database design",
+                        category: "Data Science",
+                        categoryColor: "bg-green-100 text-green-800",
+                        bgColor: "bg-gradient-to-br from-green-400 to-green-600",
+                        icon: "ph ph-database",
+                        level: "Beginner",
+                        levelColor: "bg-blue-100 text-blue-800",
+                        price: 49,
+                        duration: "18 hours",
+                        instructor: {
+                            name: "Jose Portilla",
+                            title: "Database Expert",
+                            avatar: "https://i.pravatar.cc/150?img=8"
+                        },
+                        rating: 4.6,
+                        reviews: 1870,
+                        students: 9200,
+                        lessons: 22,
+                        certificate: true,
+                        isBestseller: false,
+                        difficulty: "beginner",
+                        durationType: "medium"
+                    },
+                    
+                    // Design
+                    {
+                        id: 5,
+                        title: "UI/UX Design Masterclass with Figma",
+                        description: "Learn user interface design, user experience, and prototyping with Figma",
+                        category: "Design",
+                        categoryColor: "bg-purple-100 text-purple-800",
+                        bgColor: "bg-gradient-to-br from-purple-500 to-purple-700",
+                        icon: "ph ph-figma-logo",
+                        level: "Beginner",
+                        levelColor: "bg-blue-100 text-blue-800",
+                        price: 64,
+                        duration: "28 hours",
+                        instructor: {
+                            name: "Daniel Walter Scott",
+                            title: "UI/UX Designer",
+                            avatar: "https://i.pravatar.cc/150?img=9"
+                        },
+                        rating: 4.9,
+                        reviews: 1540,
+                        students: 11200,
+                        lessons: 26,
+                        certificate: true,
+                        isBestseller: true,
+                        difficulty: "beginner",
+                        durationType: "medium"
+                    },
+                    
+                    // Business
+                    {
+                        id: 6,
+                        title: "Digital Marketing Mastery 2025",
+                        description: "Complete guide to SEO, social media marketing, content strategy, and analytics",
+                        category: "Business",
+                        categoryColor: "bg-orange-100 text-orange-800",
+                        bgColor: "bg-gradient-to-br from-orange-500 to-orange-700",
+                        icon: "ph ph-chart-line-up",
+                        level: "Beginner",
+                        levelColor: "bg-blue-100 text-blue-800",
+                        price: 59,
+                        duration: "32 hours",
+                        instructor: {
+                            name: "Phil Ebiner",
+                            title: "Marketing Expert",
+                            avatar: "https://i.pravatar.cc/150?img=10"
+                        },
+                        rating: 4.5,
+                        reviews: 980,
+                        students: 7600,
+                        lessons: 30,
+                        certificate: true,
+                        isBestseller: false,
+                        difficulty: "beginner",
+                        durationType: "medium"
+                    },
+                    
+                    // Mobile Development
+                    {
+                        id: 7,
+                        title: "Flutter & Dart - Complete Development Guide",
+                        description: "Build beautiful, natively compiled applications for mobile, web, and desktop",
+                        category: "Mobile Development",
+                        categoryColor: "bg-teal-100 text-teal-800",
+                        bgColor: "bg-gradient-to-br from-teal-500 to-teal-700",
+                        icon: "ph ph-device-mobile",
+                        level: "Intermediate",
+                        levelColor: "bg-yellow-100 text-yellow-800",
+                        price: 84,
+                        duration: "40 hours",
+                        instructor: {
+                            name: "Andrea Bizzotto",
+                            title: "Flutter Developer",
+                            avatar: "https://i.pravatar.cc/150?img=11"
+                        },
+                        rating: 4.8,
+                        reviews: 1230,
+                        students: 8900,
+                        lessons: 38,
+                        certificate: true,
+                        isBestseller: true,
+                        difficulty: "intermediate",
+                        durationType: "long"
+                    },
+                    
+					// Free Course
+					{
+						id: 8,
+						title: "HTML & CSS Crash Course for Beginners",
+						description: "Learn the fundamentals of web development with HTML5 and CSS3",
+						category: "Web Development",
+						categoryColor: "bg-blue-100 text-blue-800",
+						bgColor: "bg-gradient-to-br from-blue-300 to-blue-500",
+						icon: "ph ph-code-simple",
+						level: "Beginner",
+						levelColor: "bg-blue-100 text-blue-800",
+						price: 0,
+						duration: "8 hours",
+						instructor: {
+							name: "Colt Steele",
+							title: "Web Developer",
+							avatar: "https://i.pravatar.cc/150?img=12"
+						},
+						rating: 4.6,
+						reviews: 2150,
+						students: 15600,
+						lessons: 14,
+						certificate: true,
+						isBestseller: false,
+						difficulty: "beginner",
+						durationType: "medium"
+					},
+					{
+						id: 9,
+						title: "JavaScript Algorithms & Data Structures",
+						description: "Master the fundamentals of JavaScript for technical interviews",
+						category: "Web Development",
+						categoryColor: "bg-blue-100 text-blue-800",
+						bgColor: "bg-gradient-to-br from-yellow-500 to-yellow-700",
+						icon: "ph ph-brackets-curly",
+						level: "Intermediate",
+						levelColor: "bg-yellow-100 text-yellow-800",
+						price: 69,
+						duration: "22 hours",
+						instructor: {
+							name: "Andrei Neagoie",
+							title: "Senior Developer",
+							avatar: "https://i.pravatar.cc/150?img=13"
+						},
+						rating: 4.9,
+						reviews: 1890,
+						students: 11200,
+						lessons: 24,
+						certificate: true,
+						isBestseller: true,
+						difficulty: "intermediate",
+						durationType: "medium"
+					},
+					{
+						id: 10,
+						title: "Machine Learning A-Z: Hands-On Python",
+						description: "Learn to create Machine Learning Algorithms in Python from two Data Science experts",
+						category: "Data Science",
+						categoryColor: "bg-green-100 text-green-800",
+						bgColor: "bg-gradient-to-br from-gray-700 to-gray-900",
+						icon: "ph ph-brain",
+						level: "Intermediate",
+						levelColor: "bg-yellow-100 text-yellow-800",
+						price: 94,
+						duration: "44 hours",
+						instructor: {
+							name: "Kirill Eremenko",
+							title: "Data Scientist",
+							avatar: "https://i.pravatar.cc/150?img=14"
+						},
+						rating: 4.7,
+						reviews: 2760,
+						students: 14300,
+						lessons: 48,
+						certificate: true,
+						isBestseller: true,
+						difficulty: "intermediate",
+						durationType: "long"
+					},
+					{
+						id: 11,
+						title: "Adobe Photoshop CC - Essentials Training",
+						description: "Master Adobe Photoshop CC without any prior knowledge",
+						category: "Design",
+						categoryColor: "bg-purple-100 text-purple-800",
+						bgColor: "bg-gradient-to-br from-blue-400 to-indigo-600",
+						icon: "ph ph-paint-brush",
+						level: "Beginner",
+						levelColor: "bg-blue-100 text-blue-800",
+						price: 49,
+						duration: "15 hours",
+						instructor: {
+							name: "Daniel Walter Scott",
+							title: "Adobe Certified",
+							avatar: "https://i.pravatar.cc/150?img=15"
+						},
+						rating: 4.5,
+						reviews: 1250,
+						students: 8400,
+						lessons: 18,
+						certificate: true,
+						isBestseller: false,
+						difficulty: "beginner",
+						durationType: "medium"
+					},
+					{
+						id: 12,
+						title: "The Complete Financial Analyst Course 2025",
+						description: "Excel, Accounting, Financial Statement Analysis, Business Analysis, Financial Math",
+						category: "Business",
+						categoryColor: "bg-orange-100 text-orange-800",
+						bgColor: "bg-gradient-to-br from-emerald-500 to-teal-700",
+						icon: "ph ph-currency-dollar",
+						level: "Beginner",
+						levelColor: "bg-blue-100 text-blue-800",
+						price: 79,
+						duration: "35 hours",
+						instructor: {
+							name: "365 Careers",
+							title: "Finance Expert",
+							avatar: "https://i.pravatar.cc/150?img=16"
+						},
+						rating: 4.6,
+						reviews: 980,
+						students: 7200,
+						lessons: 32,
+						certificate: true,
+						isBestseller: true,
+						difficulty: "beginner",
+						durationType: "medium"
+					}
+					],
+					
+					// Filtered courses
+					filteredCourses: [],
+					
+					// Categories data
+					categories: [
+						{ id: 1, name: "Web Development", count: 45, color: "bg-blue-100", icon: "ph ph-code text-blue-600" },
+						{ id: 2, name: "Data Science", count: 38, color: "bg-green-100", icon: "ph ph-chart-line text-green-600" },
+						{ id: 3, name: "Design", count: 28, color: "bg-purple-100", icon: "ph ph-palette text-purple-600" },
+						{ id: 4, name: "Business", count: 32, color: "bg-orange-100", icon: "ph ph-briefcase text-orange-600" },
+						{ id: 5, name: "Mobile Development", count: 22, color: "bg-teal-100", icon: "ph ph-device-mobile text-teal-600" },
+						{ id: 6, name: "Marketing", count: 26, color: "bg-pink-100", icon: "ph ph-megaphone text-pink-600" },
+						{ id: 7, name: "Photography", count: 19, color: "bg-red-100", icon: "ph ph-camera text-red-600" },
+						{ id: 8, name: "Music", count: 15, color: "bg-indigo-100", icon: "ph ph-music-notes text-indigo-600" }
+					],
+					
+					// Difficulty levels
+					difficultyLevels: [
+						{ id: "beginner", name: "Beginner" },
+						{ id: "intermediate", name: "Intermediate" },
+						{ id: "advanced", name: "Advanced" }
+					],
+					
+					// Initialize the app
+					init() {
+						this.totalCourses = this.allCourses.length;
+						this.filterCourses();
+					},
+					
+					// Filter courses based on selected filters
+					filterCourses() {
+						this.loading = true;
+						this.currentPage = 1;
+						
+						// Simulate API call delay
+						setTimeout(() => {
+							let filtered = [...this.allCourses];
+							
+							// Search filter
+							if (this.searchQuery) {
+								const query = this.searchQuery.toLowerCase();
+								filtered = filtered.filter(course => 
+									course.title.toLowerCase().includes(query) || 
+									course.description.toLowerCase().includes(query) ||
+									course.instructor.name.toLowerCase().includes(query)
+								);
+							}
+							
+							// Category filter
+							if (this.selectedCategories.length > 0) {
+								filtered = filtered.filter(course => 
+									this.selectedCategories.includes(course.category)
+								);
+							}
+							
+							// Price filter
+							if (this.priceFilter === 'free') {
+								filtered = filtered.filter(course => course.price === 0);
+							} else if (this.priceFilter === 'paid') {
+								filtered = filtered.filter(course => course.price > 0);
+							}
+							
+							// Difficulty level filter
+							if (this.selectedLevels.length > 0) {
+								filtered = filtered.filter(course => 
+									this.selectedLevels.includes(course.difficulty)
+								);
+							}
+							
+							// Duration filter
+							if (this.selectedDurations.length > 0) {
+								filtered = filtered.filter(course => 
+									this.selectedDurations.includes(course.durationType)
+								);
+							}
+							
+							// Sort courses
+							filtered = this.sortCourses(filtered);
+							
+							this.filteredCourses = filtered;
+							this.totalCourses = filtered.length;
+							this.loading = false;
+						}, 300);
+					},
+					
+					// Sort courses based on selected option
+					sortCourses(courses) {
+						switch(this.sortBy) {
+							case 'rating':
+								return [...courses].sort((a, b) => b.rating - a.rating);
+							case 'newest':
+								return [...courses].sort((a, b) => b.id - a.id);
+							case 'price_low':
+								return [...courses].sort((a, b) => a.price - b.price);
+							case 'price_high':
+								return [...courses].sort((a, b) => b.price - a.price);
+							case 'popular':
+							default:
+								return [...courses].sort((a, b) => b.students - a.students);
+						}
+					},
+					
+					// Reset all filters
+					resetFilters() {
+						this.searchQuery = '';
+						this.selectedCategories = [];
+						this.priceFilter = 'all';
+						this.selectedLevels = [];
+						this.selectedDurations = [];
+						this.sortBy = 'popular';
+						this.filterCourses();
+					},
+					
+					// Load more courses
+					loadMoreCourses() {
+						this.loadingMore = true;
+						
+						// Simulate API call
+						setTimeout(() => {
+							// In a real app, this would fetch more courses from an API
+							this.coursesPerPage += 4;
+							this.loadingMore = false;
+						}, 800);
+					},
+					
+					// Pagination methods
+					getVisiblePages() {
+						const total = this.totalPages;
+						const current = this.currentPage;
+						
+						if (total <= 5) {
+							return Array.from({length: total}, (_, i) => i + 1);
+						}
+						
+						if (current <= 3) {
+							return [1, 2, 3, 4, '...', total];
+						}
+						
+						if (current >= total - 2) {
+							return [1, '...', total - 3, total - 2, total - 1, total];
+						}
+						
+						return [1, '...', current - 1, current, current + 1, '...', total];
+					},
+					
+					goToPage(page) {
+						if (page === '...') return;
+						this.currentPage = page;
+					},
+					
+					prevPage() {
+						if (this.currentPage > 1) {
+							this.currentPage--;
+						}
+					},
+					
+					nextPage() {
+						if (this.currentPage < this.totalPages) {
+							this.currentPage++;
+						}
+					},
+					
+					// Computed properties
+					get totalPages() {
+						return Math.ceil(this.filteredCourses.length / this.coursesPerPage);
+					},
+					
+					get paginatedCourses() {
+						const start = (this.currentPage - 1) * this.coursesPerPage;
+						const end = start + this.coursesPerPage;
+						return this.filteredCourses.slice(start, end);
+					}
+				}
+			}
+		</script>
+	</body>
+</html>
