@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - PlasicLMS</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 
+                            50: '#f0fdf4', 
+                            100: '#dcfce7', 
+                            500: '#22c55e', 
+                            600: '#16a34a', 
+                            700: '#15803d',
+                            800: '#166534'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; 
+            line-height: 1.6;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #22c55e;
+            border-radius: 4px;
+        }
+
+        /* Table of Contents */
+        .toc-link {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .toc-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .toc-link:hover::before {
+            width: 10px;
+            height: 10px;
+        }
+
+        /* Legal Text Styling */
+        .legal-section {
+            counter-reset: section;
+        }
+        .legal-section h2 {
+            counter-reset: subsection;
+        }
+        .legal-section h2::before {
+            counter-increment: section;
+            content: counter(section) ". ";
+            color: #16a34a;
+            font-weight: bold;
+        }
+        .legal-section h3::before {
+            counter-increment: subsection;
+            content: counter(section) "." counter(subsection) ". ";
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none;
+            }
+            body {
+                font-size: 12pt;
+                line-height: 1.5;
+            }
+        }
+    </style>
+</head>
+<body x-data="{ lastUpdated: 'December 15, 2024', tocOpen: false }">
+    <!-- Navigation -->
+    <nav class="sticky top-0 bg-white border-b border-slate-200 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3 no-print">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center">
+                        <i class="ph ph-graduation-cap text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-black text-slate-900">PlasicLMS</span>
+                </a>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-4 no-print">
+                    <button @click="window.print()" 
+                            class="flex items-center gap-2 text-slate-600 hover:text-slate-900 px-4 py-2 rounded-lg hover:bg-slate-100 transition">
+                        <i class="ph ph-printer"></i>
+                        Print
+                    </button>
+                    <a href="index.html" 
+                       class="flex items-center gap-2 text-slate-600 hover:text-slate-900 px-4 py-2 rounded-lg hover:bg-slate-100 transition">
+                        <i class="ph ph-arrow-left"></i>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl lg:text-5xl font-black text-slate-900 mb-6">
+                Terms of Service
+            </h1>
+            <p class="text-xl text-slate-600 max-w-3xl mx-auto mb-4">
+                Please read these terms carefully before using PlasicLMS
+            </p>
+            <div class="inline-flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-lg">
+                <i class="ph ph-calendar text-brand-600"></i>
+                <span class="text-slate-700">Last Updated: <span x-text="lastUpdated" class="font-bold"></span></span>
+            </div>
+        </header>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Table of Contents (Sidebar) -->
+            <aside class="lg:w-1/4 no-print">
+                <div class="sticky top-24 bg-white rounded-xl border border-slate-200 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-bold text-slate-900">Contents</h2>
+                        <button @click="tocOpen = !tocOpen" class="lg:hidden">
+                            <i class="ph ph-caret-down" :class="tocOpen ? 'rotate-180' : ''"></i>
+                        </button>
+                    </div>
+                    
+                    <div :class="tocOpen ? 'block' : 'hidden lg:block'">
+                        <nav class="space-y-2">
+                            <a href="#acceptance" class="block toc-link text-slate-600 hover:text-brand-600 transition">1. Acceptance of Terms</a>
+                            <a href="#eligibility" class="block toc-link text-slate-600 hover:text-brand-600 transition">2. Eligibility</a>
+                            <a href="#account" class="block toc-link text-slate-600 hover:text-brand-600 transition">3. Account Registration</a>
+                            <a href="#subscriptions" class="block toc-link text-slate-600 hover:text-brand-600 transition">4. Subscriptions & Payments</a>
+                            <a href="#content" class="block toc-link text-slate-600 hover:text-brand-600 transition">5. Content & Intellectual Property</a>
+                            <a href="#user-conduct" class="block toc-link text-slate-600 hover:text-brand-600 transition">6. User Conduct</a>
+                            <a href="#privacy" class="block toc-link text-slate-600 hover:text-brand-600 transition">7. Privacy Policy</a>
+                            <a href="#termination" class="block toc-link text-slate-600 hover:text-brand-600 transition">8. Termination</a>
+                            <a href="#disclaimer" class="block toc-link text-slate-600 hover:text-brand-600 transition">9. Disclaimer of Warranties</a>
+                            <a href="#limitation" class="block toc-link text-slate-600 hover:text-brand-600 transition">10. Limitation of Liability</a>
+                            <a href="#indemnification" class="block toc-link text-slate-600 hover:text-brand-600 transition">11. Indemnification</a>
+                            <a href="#governing" class="block toc-link text-slate-600 hover:text-brand-600 transition">12. Governing Law</a>
+                            <a href="#changes" class="block toc-link text-slate-600 hover:text-brand-600 transition">13. Changes to Terms</a>
+                            <a href="#contact" class="block toc-link text-slate-600 hover:text-brand-600 transition">14. Contact Information</a>
+                        </nav>
+
+                        <div class="mt-8 pt-6 border-t border-slate-200">
+                            <h3 class="font-bold text-slate-900 mb-3">Related Documents</h3>
+                            <div class="space-y-2">
+                                <a href="privacy.html" class="flex items-center gap-2 text-slate-600 hover:text-brand-600 transition">
+                                    <i class="ph ph-shield-check"></i>
+                                    Privacy Policy
+                                </a>
+                                <a href="cookie-policy.html" class="flex items-center gap-2 text-slate-600 hover:text-brand-600 transition">
+                                    <i class="ph ph-cookie"></i>
+                                    Cookie Policy
+                                </a>
+                                <a href="refund-policy.html" class="flex items-center gap-2 text-slate-600 hover:text-brand-600 transition">
+                                    <i class="ph ph-currency-dollar"></i>
+                                    Refund Policy
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="lg:w-3/4">
+                <div class="bg-white rounded-xl border border-slate-200 p-8 legal-section">
+                    <!-- Introduction -->
+                    <div class="mb-8">
+                        <p class="text-slate-600 mb-4">
+                            Welcome to PlasicLMS. These Terms of Service ("Terms") govern your access to and use of the PlasicLMS website, mobile applications, and services (collectively, the "Service").
+                        </p>
+                        <p class="text-slate-600">
+                            By accessing or using the Service, you agree to be bound by these Terms. If you do not agree to these Terms, you may not access or use the Service.
+                        </p>
+                    </div>
+
+                    <!-- Section 1 -->
+                    <section id="acceptance" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Acceptance of Terms</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>
+                                These Terms constitute a legally binding agreement between you ("User", "you", or "your") and PlasicLMS ("Company", "we", "us", or "our").
+                            </p>
+                            <p>
+                                By accessing, browsing, or using the Service, you acknowledge that you have read, understood, and agree to be bound by these Terms and our Privacy Policy.
+                            </p>
+                            <p>
+                                If you are using the Service on behalf of an organization, you are agreeing to these Terms for that organization and representing that you have the authority to bind that organization to these Terms.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Section 2 -->
+                    <section id="eligibility" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Eligibility</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>
+                                You must be at least 13 years old to use the Service. If you are under 18, you may only use the Service with the consent and supervision of a parent or legal guardian.
+                            </p>
+                            <p>
+                                By using the Service, you represent and warrant that:
+                            </p>
+                            <ul class="list-disc pl-6 space-y-2">
+                                <li>You have the legal capacity to enter into these Terms</li>
+                                <li>You are not prohibited from receiving our services under applicable law</li>
+                                <li>You will not use the Service for any illegal or unauthorized purpose</li>
+                                <li>All registration information you submit is truthful and accurate</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Section 3 -->
+                    <section id="account" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Account Registration</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <h3 class="text-xl font-semibold text-slate-800">Account Creation</h3>
+                            <p>
+                                To access certain features of the Service, you must create an account. You agree to:
+                            </p>
+                            <ul class="list-disc pl-6 space-y-2">
+                                <li>Provide accurate, current, and complete information</li>
+                                <li>Maintain and promptly update your account information</li>
+                                <li>Maintain the security of your password and accept all risks of unauthorized access</li>
+                                <li>Notify us immediately of any unauthorized use of your account</li>
+                                <li>Be responsible for all activities that occur under your account</li>
+                            </ul>
+                            
+                            <h3 class="text-xl font-semibold text-slate-800 mt-6">Account Termination</h3>
+                            <p>
+                                We reserve the right to suspend or terminate your account if any information provided is inaccurate, not current, or incomplete, or if we have reasonable grounds to suspect that such information is inaccurate, not current, or incomplete.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Section 4 -->
+                    <section id="subscriptions" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Subscriptions & Payments</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <h3 class="text-xl font-semibold text-slate-800">Free Trial</h3>
+                            <p>
+                                We offer a 7-day free trial for new users. No credit card is required to start the trial. At the end of the trial period, you will be automatically enrolled in the selected paid plan unless you cancel before the trial ends.
+                            </p>
+                            
+                            <h3 class="text-xl font-semibold text-slate-800 mt-6">Paid Subscriptions</h3>
+                            <p>
+                                By subscribing to a paid plan, you agree to pay all fees associated with that plan. Fees are billed in advance on a recurring basis (monthly or annually) unless otherwise stated.
+                            </p>
+                            
+                            <h3 class="text-xl font-semibold text-slate-800 mt-6">Cancellation & Refunds</h3>
+                            <p>
+                                You may cancel your subscription at any time. Cancellation will take effect at the end of the current billing period. No refunds are provided for partial billing periods.
+                            </p>
+                            
+                            <h3 class="text-xl font-semibold text-slate-800 mt-6">Price Changes</h3>
+                            <p>
+                                We reserve the right to change subscription fees at any time. We will provide at least 30 days notice before any price changes take effect.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Section 5 -->
+                    <section id="content" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Content & Intellectual Property</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <h3 class="text-xl font-semibold text-slate-800">Our Content</h3>
+                            <p>
+                                All content provided through the Service, including but not limited to text, graphics, logos, images, audio clips, video, data compilations, and software, is the property of PlasicLMS or its content suppliers and is protected by international copyright laws.
+                            </p>
+                            
+                            <h3 class="text-xl font-semibold text-slate-800 mt-6">License Grant</h3>
+                            <p>
+                                We grant you a limited, non-exclusive, non-transferable, revocable license to access and use the Service for your personal, non-commercial educational purposes.
+                            </p>
+                            
+                            <h3 class="text-xl font-semibold text-slate-800 mt-6">User Content</h3>
+                            <p>
+                                By submitting content (comments, assignments, projects) to the Service, you grant us a worldwide, non-exclusive, royalty-free license to use, reproduce, modify, and display such content for the purpose of providing and improving the Service.
+                            </p>
+                            
+                            <h3 class="text-xl font-semibold text-slate-800 mt-6">Copyright Infringement</h3>
+                            <p>
+                                We respect intellectual property rights. If you believe your work has been copied in a way that constitutes copyright infringement, please contact us at copyright@plasiclms.com.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Section 6 -->
+                    <section id="user-conduct" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">User Conduct</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>
+                                You agree not to use the Service to:
+                            </p>
+                            <ul class="list-disc pl-6 space-y-2">
+                                <li>Violate any laws or regulations</li>
+                                <li>Infringe upon the rights of others</li>
+                                <li>Transmit any viruses, malware, or harmful code</li>
+                                <li>Attempt to gain unauthorized access to the Service</li>
+                                <li>Interfere with the proper working of the Service</li>
+                                <li>Harass, threaten, or intimidate other users</li>
+                                <li>Post inappropriate, offensive, or illegal content</li>
+                                <li>Use automated systems to access the Service</li>
+                                <li>Share your account credentials with others</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Section 7 -->
+                    <section id="privacy" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Privacy Policy</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>
+                                Your privacy is important to us. Our Privacy Policy explains how we collect, use, and protect your personal information. By using the Service, you consent to our collection and use of personal information as outlined in our Privacy Policy.
+                            </p>
+                            <p>
+                                We implement reasonable security measures to protect your information, but cannot guarantee absolute security. You are responsible for maintaining the confidentiality of your account information.
+                            </p>
+                            <a href="privacy.html" class="inline-flex items-center gap-2 text-brand-600 hover:text-brand-700 font-medium">
+                                Read our full Privacy Policy
+                                <i class="ph ph-arrow-right"></i>
+                            </a>
+                        </div>
+                    </section>
+
+                    <!-- Section 8 -->
+                    <section id="termination" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Termination</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>
+                                We may terminate or suspend your access to the Service immediately, without prior notice or liability, for any reason, including but not limited to:
+                            </p>
+                            <ul class="list-disc pl-6 space-y-2">
+                                <li>Breach of these Terms</li>
+                                <li>Non-payment of fees</li>
+                                <li>Requests by law enforcement</li>
+                                <li>Unexpected technical issues</li>
+                                <li>Extended periods of inactivity</li>
+                            </ul>
+                            <p>
+                                Upon termination, your right to use the Service will immediately cease. All provisions of these Terms which by their nature should survive termination shall survive.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Section 9 -->
+                    <section id="disclaimer" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Disclaimer of Warranties</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>
+                                THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMISSIBLE BY LAW, WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:
+                            </p>
+                            <ul class="list-disc pl-6 space-y-2">
+                                <li>IMPLIED WARRANTIES OF MERCHANTABILITY</li>
+                                <li>FITNESS FOR A PARTICULAR PURPOSE</li>
+                                <li>NON-INFRINGEMENT</li>
+                                <li>COURSE OF PERFORMANCE</li>
+                            </ul>
+                            <p>
+                                We do not warrant that the Service will be uninterrupted, secure, or error-free, that defects will be corrected, or that the Service is free of viruses or other harmful components.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Section 10 -->
+                    <section id="limitation" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Limitation of Liability</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>
+                                TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT SHALL PLASICLMS, ITS DIRECTORS, EMPLOYEES, PARTNERS, AGENTS, SUPPLIERS, OR AFFILIATES BE LIABLE FOR:
+                            </p>
+                            <ul class="list-disc pl-6 space-y-2">
+                                <li>ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES</li>
+                                <li>ANY LOSS OF PROFITS, REVENUE, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES</li>
+                                <li>ANY DAMAGES RESULTING FROM:
+                                    <ul class="list-circle pl-6 mt-2 space-y-1">
+                                        <li>YOUR ACCESS TO OR USE OF OR INABILITY TO ACCESS OR USE THE SERVICE</li>
+                                        <li>ANY CONDUCT OR CONTENT OF ANY THIRD PARTY ON THE SERVICE</li>
+                                        <li>ANY CONTENT OBTAINED FROM THE SERVICE</li>
+                                        <li>UNAUTHORIZED ACCESS, USE, OR ALTERATION OF YOUR TRANSMISSIONS OR CONTENT</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <p>
+                                OUR TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNTS YOU HAVE PAID TO US IN THE PREVIOUS SIX (6) MONTHS.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Section 11 -->
+                    <section id="indemnification" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Indemnification</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>
+                                You agree to indemnify, defend, and hold harmless PlasicLMS and its affiliates, officers, directors, employees, and agents from and against any and all claims, damages, obligations, losses, liabilities, costs, or debt, and expenses (including but not limited to attorney's fees) arising from:
+                            </p>
+                            <ul class="list-disc pl-6 space-y-2">
+                                <li>Your use of and access to the Service</li>
+                                <li>Your violation of any term of these Terms</li>
+                                <li>Your violation of any third-party right, including without limitation any copyright, property, or privacy right</li>
+                                <li>Any claim that your content caused damage to a third party</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Section 12 -->
+                    <section id="governing" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Governing Law</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>
+                                These Terms shall be governed and construed in accordance with the laws of Bangladesh, without regard to its conflict of law provisions.
+                            </p>
+                            <p>
+                                Any disputes arising under or in connection with these Terms shall be subject to the exclusive jurisdiction of the courts located in Dhaka, Bangladesh.
+                            </p>
+                            <p>
+                                If you are accessing the Service from outside Bangladesh, you are responsible for compliance with local laws.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Section 13 -->
+                    <section id="changes" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Changes to Terms</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>
+                                We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days notice prior to any new terms taking effect.
+                            </p>
+                            <p>
+                                What constitutes a material change will be determined at our sole discretion. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.
+                            </p>
+                            <p>
+                                It is your responsibility to periodically review these Terms for changes. The "Last Updated" date at the top of this page indicates when these Terms were last revised.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Section 14 -->
+                    <section id="contact" class="mb-10 scroll-mt-24">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-4">Contact Information</h2>
+                        <div class="space-y-4 text-slate-600">
+                            <p>
+                                If you have any questions about these Terms, please contact us:
+                            </p>
+                            <div class="bg-slate-50 rounded-lg p-6">
+                                <div class="space-y-4">
+                                    <div class="flex items-start gap-3">
+                                        <i class="ph ph-envelope-simple text-brand-600 mt-1"></i>
+                                        <div>
+                                            <h4 class="font-semibold text-slate-900">Email</h4>
+                                            <p class="text-slate-600">legal@plasiclms.com</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <i class="ph ph-map-pin text-brand-600 mt-1"></i>
+                                        <div>
+                                            <h4 class="font-semibold text-slate-900">Address</h4>
+                                            <p class="text-slate-600">
+                                                PlasicLMS Inc.<br>
+                                                123 Learning Street<br>
+                                                Dhaka 1212, Bangladesh
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <i class="ph ph-phone text-brand-600 mt-1"></i>
+                                        <div>
+                                            <h4 class="font-semibold text-slate-900">Phone</h4>
+                                            <p class="text-slate-600">+880 1234 567890</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Acceptance Section -->
+                    <div class="mt-12 pt-8 border-t border-slate-200">
+                        <div class="bg-gradient-to-r from-brand-50 to-emerald-50 rounded-xl p-6">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 rounded-full bg-brand-100 flex items-center justify-center">
+                                    <i class="ph ph-warning-circle text-brand-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-900">Important Notice</h3>
+                                    <p class="text-slate-600">By using PlasicLMS, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <a href="index.html" class="px-6 py-3 bg-white border-2 border-slate-200 text-slate-800 font-bold rounded-lg hover:border-brand-500 hover:text-brand-600 transition text-center">
+                                    Return to Homepage
+                                </a>
+                                <a href="signup.html" class="px-6 py-3 bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold rounded-lg hover:shadow-lg transition text-center">
+                                    I Accept - Create Account
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Last Updated -->
+                <div class="mt-8 text-center text-slate-500 text-sm">
+                    <p>These Terms of Service were last updated on <span x-text="lastUpdated" class="font-semibold"></span></p>
+                    <p class="mt-2">© 2024 PlasicLMS. All rights reserved.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-12 mt-12 no-print">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center">
+                            <i class="ph ph-graduation-cap text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-black">PlasicLMS</span>
+                    </div>
+                    <p class="text-slate-400">
+                        Empowering learners worldwide with quality online education.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Legal</h4>
+                    <ul class="space-y-3">
+                        <li><a href="terms.html" class="text-slate-400 hover:text-white transition">Terms of Service</a></li>
+                        <li><a href="privacy.html" class="text-slate-400 hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="cookie-policy.html" class="text-slate-400 hover:text-white transition">Cookie Policy</a></li>
+                        <li><a href="refund-policy.html" class="text-slate-400 hover:text-white transition">Refund Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Support</h4>
+                    <ul class="space-y-3">
+                        <li><a href="help.html" class="text-slate-400 hover:text-white transition">Help Center</a></li>
+                        <li><a href="contact.html" class="text-slate-400 hover:text-white transition">Contact Us</a></li>
+                        <li><a href="faq.html" class="text-slate-400 hover:text-white transition">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Company</h4>
+                    <ul class="space-y-3">
+                        <li><a href="about.html" class="text-slate-400 hover:text-white transition">About Us</a></li>
+                        <li><a href="careers.html" class="text-slate-400 hover:text-white transition">Careers</a></li>
+                        <li><a href="blog.html" class="text-slate-400 hover:text-white transition">Blog</a></li>
+                        <li><a href="press.html" class="text-slate-400 hover:text-white transition">Press</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-800 mt-12 pt-8 text-center text-slate-500">
+                <p>&copy; 2024 PlasicLMS. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Print functionality
+        function setupPrint() {
+            const printBtn = document.querySelector('[onclick="window.print()"]');
+            if (printBtn) {
+                printBtn.addEventListener('click', () => {
+                    window.print();
+                });
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupPrint();
+            
+            // Update last updated date
+            const currentDate = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = currentDate.toLocaleDateString('en-US', options);
+            
+            // Set the last updated date
+            const lastUpdatedElement = document.querySelector('[x-text="lastUpdated"]');
+            if (lastUpdatedElement) {
+                lastUpdatedElement.textContent = formattedDate;
+            }
+        });
+    </script>
+</body>
+</html>
