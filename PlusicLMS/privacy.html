@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - PlasicLMS</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 
+                            50: '#f0fdf4', 
+                            100: '#dcfce7', 
+                            500: '#22c55e', 
+                            600: '#16a34a', 
+                            700: '#15803d',
+                            800: '#166534'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; 
+            line-height: 1.7;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #22c55e;
+            border-radius: 4px;
+        }
+
+        /* Sticky Table of Contents */
+        .sticky-toc {
+            position: sticky;
+            top: 100px;
+        }
+
+        /* Content Styling */
+        .content-section {
+            scroll-margin-top: 100px;
+        }
+
+        /* Highlight Current Section */
+        .toc-link.active {
+            color: #16a34a;
+            font-weight: 600;
+            background-color: #f0fdf4;
+            border-left: 3px solid #16a34a;
+        }
+
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            body {
+                font-size: 12pt;
+                line-height: 1.5;
+            }
+            
+            .container {
+                max-width: none !important;
+            }
+        }
+    </style>
+</head>
+<body x-data="privacyPolicy()" x-init="init()">
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 py-4">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center">
+                        <i class="ph ph-graduation-cap text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-black text-slate-900">PlasicLMS</span>
+                </a>
+
+                <!-- Navigation -->
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="index.html" class="text-slate-700 hover:text-brand-600 font-medium transition">Home</a>
+                    <a href="courses.html" class="text-slate-700 hover:text-brand-600 font-medium transition">Courses</a>
+                    <a href="signup.html" class="bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold px-6 py-2 rounded-xl hover:shadow-lg transition">
+                        Get Started
+                    </a>
+                </nav>
+
+                <!-- Mobile Menu -->
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-slate-700">
+                    <i class="ph ph-list text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false" 
+         class="md:hidden bg-white border-b border-slate-200 py-4" x-transition>
+        <div class="container mx-auto px-6 space-y-4">
+            <a href="index.html" class="block text-slate-700 hover:text-brand-600 font-medium py-2">Home</a>
+            <a href="courses.html" class="block text-slate-700 hover:text-brand-600 font-medium py-2">Courses</a>
+            <a href="signup.html" class="block bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold text-center py-3 rounded-xl">
+                Get Started
+            </a>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="bg-slate-50 border-b border-slate-200 py-4">
+        <div class="container mx-auto px-6">
+            <nav class="flex items-center gap-2 text-sm text-slate-600">
+                <a href="index.html" class="hover:text-brand-600 transition">Home</a>
+                <i class="ph ph-caret-right text-slate-400"></i>
+                <span class="text-slate-900 font-medium">Privacy Policy</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="py-12">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col lg:flex-row gap-12">
+                <!-- Table of Contents -->
+                <div class="lg:w-1/4">
+                    <div class="sticky-toc bg-white rounded-2xl shadow-sm p-6 border border-slate-200">
+                        <h3 class="text-lg font-bold text-slate-900 mb-6">On This Page</h3>
+                        <nav class="space-y-3">
+                            <a href="#introduction" @click="scrollToSection('introduction')" 
+                               :class="activeSection === 'introduction' ? 'toc-link active' : 'toc-link'"
+                               class="block text-slate-700 hover:text-brand-600 transition px-3 py-2 rounded-lg">
+                                1. Introduction
+                            </a>
+                            <a href="#information-collection" @click="scrollToSection('information-collection')"
+                               :class="activeSection === 'information-collection' ? 'toc-link active' : 'toc-link'"
+                               class="block text-slate-700 hover:text-brand-600 transition px-3 py-2 rounded-lg">
+                                2. Information We Collect
+                            </a>
+                            <a href="#how-we-use" @click="scrollToSection('how-we-use')"
+                               :class="activeSection === 'how-we-use' ? 'toc-link active' : 'toc-link'"
+                               class="block text-slate-700 hover:text-brand-600 transition px-3 py-2 rounded-lg">
+                                3. How We Use Your Information
+                            </a>
+                            <a href="#data-sharing" @click="scrollToSection('data-sharing')"
+                               :class="activeSection === 'data-sharing' ? 'toc-link active' : 'toc-link'"
+                               class="block text-slate-700 hover:text-brand-600 transition px-3 py-2 rounded-lg">
+                                4. Data Sharing & Disclosure
+                            </a>
+                            <a href="#data-security" @click="scrollToSection('data-security')"
+                               :class="activeSection === 'data-security' ? 'toc-link active' : 'toc-link'"
+                               class="block text-slate-700 hover:text-brand-600 transition px-3 py-2 rounded-lg">
+                                5. Data Security
+                            </a>
+                            <a href="#your-rights" @click="scrollToSection('your-rights')"
+                               :class="activeSection === 'your-rights' ? 'toc-link active' : 'toc-link'"
+                               class="block text-slate-700 hover:text-brand-600 transition px-3 py-2 rounded-lg">
+                                6. Your Rights & Choices
+                            </a>
+                            <a href="#cookies" @click="scrollToSection('cookies')"
+                               :class="activeSection === 'cookies' ? 'toc-link active' : 'toc-link'"
+                               class="block text-slate-700 hover:text-brand-600 transition px-3 py-2 rounded-lg">
+                                7. Cookies & Tracking
+                            </a>
+                            <a href="#children-privacy" @click="scrollToSection('children-privacy')"
+                               :class="activeSection === 'children-privacy' ? 'toc-link active' : 'toc-link'"
+                               class="block text-slate-700 hover:text-brand-600 transition px-3 py-2 rounded-lg">
+                                8. Children's Privacy
+                            </a>
+                            <a href="#changes" @click="scrollToSection('changes')"
+                               :class="activeSection === 'changes' ? 'toc-link active' : 'toc-link'"
+                               class="block text-slate-700 hover:text-brand-600 transition px-3 py-2 rounded-lg">
+                                9. Policy Changes
+                            </a>
+                            <a href="#contact" @click="scrollToSection('contact')"
+                               :class="activeSection === 'contact' ? 'toc-link active' : 'toc-link'"
+                               class="block text-slate-700 hover:text-brand-600 transition px-3 py-2 rounded-lg">
+                                10. Contact Us
+                            </a>
+                        </nav>
+
+                        <!-- Download & Print -->
+                        <div class="mt-8 pt-6 border-t border-slate-200 space-y-3">
+                            <button @click="printPage" 
+                                    class="w-full flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 rounded-lg transition">
+                                <i class="ph ph-printer"></i>
+                                Print Policy
+                            </button>
+                            <button @click="downloadPDF" 
+                                    class="w-full flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 rounded-lg transition">
+                                <i class="ph ph-file-pdf"></i>
+                                Download PDF
+                            </button>
+                        </div>
+
+                        <!-- Last Updated -->
+                        <div class="mt-6 pt-6 border-t border-slate-200">
+                            <p class="text-sm text-slate-600">
+                                <strong>Last Updated:</strong><br>
+                                December 15, 2024
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="lg:w-3/4">
+                    <!-- Header -->
+                    <div class="mb-12">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-500 to-emerald-500 flex items-center justify-center">
+                                <i class="ph ph-shield-check text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-4xl lg:text-5xl font-black text-slate-900">Privacy Policy</h1>
+                                <p class="text-slate-600 mt-2">Your privacy is important to us</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-brand-50 to-emerald-50 rounded-2xl p-6 border border-brand-100">
+                            <p class="text-slate-700">
+                                This Privacy Policy explains how PlasicLMS ("we", "us", or "our") collects, uses, discloses, 
+                                and protects your personal information when you use our learning platform, website, and related 
+                                services. By using PlasicLMS, you consent to the practices described in this policy.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Content Sections -->
+                    <div class="space-y-12">
+                        <!-- Section 1 -->
+                        <section id="introduction" class="content-section">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center font-bold">
+                                    1
+                                </div>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-900">Introduction</h2>
+                            </div>
+                            <div class="prose prose-lg max-w-none">
+                                <p>
+                                    PlasicLMS is committed to protecting your privacy and ensuring the security of your 
+                                    personal information. This Privacy Policy applies to all users of our platform, 
+                                    including students, instructors, and visitors to our website.
+                                </p>
+                                <p>
+                                    We comply with applicable data protection laws, including the General Data Protection 
+                                    Regulation (GDPR) for users in the European Union, the California Consumer Privacy 
+                                    Act (CCPA) for California residents, and other relevant privacy regulations.
+                                </p>
+                                <div class="bg-slate-50 rounded-xl p-5 my-6 border border-slate-200">
+                                    <h4 class="font-bold text-slate-900 mb-2">Key Principles</h4>
+                                    <ul class="space-y-2">
+                                        <li class="flex items-start gap-2">
+                                            <i class="ph ph-check-circle text-brand-600 mt-1"></i>
+                                            <span>Transparency about data collection and use</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i class="ph ph-check-circle text-brand-600 mt-1"></i>
+                                            <span>Limited collection of necessary information</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i class="ph ph-check-circle text-brand-600 mt-1"></i>
+                                            <span>Secure storage and protection of your data</span>
+                                        </li>
+                                        <li class="flex items-start gap-2">
+                                            <i class="ph ph-check-circle text-brand-600 mt-1"></i>
+                                            <span>Your control over your personal information</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Section 2 -->
+                        <section id="information-collection" class="content-section">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center font-bold">
+                                    2
+                                </div>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-900">Information We Collect</h2>
+                            </div>
+                            <div class="prose prose-lg max-w-none">
+                                <h3 class="text-xl font-bold text-slate-900 mb-4">Personal Information</h3>
+                                <p>
+                                    We collect information that you provide directly to us when you:
+                                </p>
+                                <ul>
+                                    <li>Create an account or profile</li>
+                                    <li>Enroll in courses or purchase services</li>
+                                    <li>Participate in discussions or submit assignments</li>
+                                    <li>Contact our support team</li>
+                                    <li>Subscribe to newsletters or marketing communications</li>
+                                </ul>
+
+                                <h3 class="text-xl font-bold text-slate-900 mt-8 mb-4">Automatically Collected Information</h3>
+                                <p>
+                                    When you use our platform, we automatically collect certain information, including:
+                                </p>
+                                <ul>
+                                    <li><strong>Device Information:</strong> IP address, browser type, operating system</li>
+                                    <li><strong>Usage Data:</strong> Pages visited, time spent, features used</li>
+                                    <li><strong>Location Data:</strong> General location based on IP address</li>
+                                    <li><strong>Cookies and Tracking:</strong> Information from cookies and similar technologies</li>
+                                </ul>
+
+                                <h3 class="text-xl font-bold text-slate-900 mt-8 mb-4">Learning Data</h3>
+                                <p>
+                                    As an educational platform, we collect data related to your learning progress:
+                                </p>
+                                <ul>
+                                    <li>Course enrollment and completion status</li>
+                                    <li>Quiz and assignment scores</li>
+                                    <li>Time spent on learning materials</li>
+                                    <li>Interaction with instructors and peers</li>
+                                </ul>
+                            </div>
+                        </section>
+
+                        <!-- Section 3 -->
+                        <section id="how-we-use" class="content-section">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center font-bold">
+                                    3
+                                </div>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-900">How We Use Your Information</h2>
+                            </div>
+                            <div class="prose prose-lg max-w-none">
+                                <p>
+                                    We use your personal information for the following purposes:
+                                </p>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                                    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+                                        <div class="w-12 h-12 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
+                                            <i class="ph ph-gear text-xl"></i>
+                                        </div>
+                                        <h4 class="font-bold text-slate-900 mb-2">Service Delivery</h4>
+                                        <p class="text-slate-600 text-sm">
+                                            To provide and maintain our learning platform, process payments, and deliver course content.
+                                        </p>
+                                    </div>
+                                    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+                                        <div class="w-12 h-12 rounded-lg bg-green-100 text-green-600 flex items-center justify-center mb-4">
+                                            <i class="ph ph-graduation-cap text-xl"></i>
+                                        </div>
+                                        <h4 class="font-bold text-slate-900 mb-2">Learning Improvement</h4>
+                                        <p class="text-slate-600 text-sm">
+                                            To personalize your learning experience and improve course content based on usage patterns.
+                                        </p>
+                                    </div>
+                                    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+                                        <div class="w-12 h-12 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center mb-4">
+                                            <i class="ph ph-envelope text-xl"></i>
+                                        </div>
+                                        <h4 class="font-bold text-slate-900 mb-2">Communication</h4>
+                                        <p class="text-slate-600 text-sm">
+                                            To send important updates, respond to inquiries, and provide customer support.
+                                        </p>
+                                    </div>
+                                    <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+                                        <div class="w-12 h-12 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center mb-4">
+                                            <i class="ph ph-shield text-xl"></i>
+                                        </div>
+                                        <h4 class="font-bold text-slate-900 mb-2">Security & Compliance</h4>
+                                        <p class="text-slate-600 text-sm">
+                                            To protect against fraud, ensure platform security, and comply with legal obligations.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <p>
+                                    We process your personal information based on legitimate interests, contractual necessity, 
+                                    and with your consent where required by law.
+                                </p>
+                            </div>
+                        </section>
+
+                        <!-- Section 4 -->
+                        <section id="data-sharing" class="content-section">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center font-bold">
+                                    4
+                                </div>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-900">Data Sharing & Disclosure</h2>
+                            </div>
+                            <div class="prose prose-lg max-w-none">
+                                <p>
+                                    We do not sell your personal information to third parties. We may share your information 
+                                    in the following circumstances:
+                                </p>
+
+                                <h3 class="text-xl font-bold text-slate-900 mt-6 mb-4">With Your Consent</h3>
+                                <p>
+                                    We share information when you give us explicit permission to do so, such as when you 
+                                    connect third-party services to your account.
+                                </p>
+
+                                <h3 class="text-xl font-bold text-slate-900 mt-6 mb-4">Service Providers</h3>
+                                <p>
+                                    We engage trusted third-party service providers to assist with:
+                                </p>
+                                <ul>
+                                    <li>Payment processing (Stripe, PayPal)</li>
+                                    <li>Email and communication services</li>
+                                    <li>Analytics and data storage</li>
+                                    <li>Customer support platforms</li>
+                                </ul>
+
+                                <h3 class="text-xl font-bold text-slate-900 mt-6 mb-4">Legal Requirements</h3>
+                                <p>
+                                    We may disclose information if required by law, such as to:
+                                </p>
+                                <ul>
+                                    <li>Comply with legal obligations or court orders</li>
+                                    <li>Protect our rights, property, or safety</li>
+                                    <li>Prevent fraud or security issues</li>
+                                </ul>
+
+                                <h3 class="text-xl font-bold text-slate-900 mt-6 mb-4">Business Transfers</h3>
+                                <p>
+                                    In the event of a merger, acquisition, or sale of assets, your information may be 
+                                    transferred as part of that transaction.
+                                </p>
+                            </div>
+                        </section>
+
+                        <!-- Section 5 -->
+                        <section id="data-security" class="content-section">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center font-bold">
+                                    5
+                                </div>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-900">Data Security</h2>
+                            </div>
+                            <div class="prose prose-lg max-w-none">
+                                <p>
+                                    We implement appropriate technical and organizational measures to protect your personal 
+                                    information against unauthorized access, alteration, disclosure, or destruction.
+                                </p>
+
+                                <div class="bg-slate-50 rounded-xl p-6 my-6 border border-slate-200">
+                                    <h4 class="font-bold text-slate-900 mb-4">Security Measures Include:</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">
+                                                <i class="ph ph-lock"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium">Encryption</div>
+                                                <div class="text-sm text-slate-600">Data encrypted in transit and at rest</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                                                <i class="ph ph-shield-check"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium">Access Control</div>
+                                                <div class="text-sm text-slate-600">Role-based access to sensitive data</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
+                                                <i class="ph ph-cloud-arrow-up"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium">Regular Backups</div>
+                                                <div class="text-sm text-slate-600">Automated data backup systems</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center">
+                                                <i class="ph ph-eye-slash"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium">Security Audits</div>
+                                                <div class="text-sm text-slate-600">Regular security testing and audits</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p>
+                                    While we strive to protect your information, no security system is impenetrable. 
+                                    We cannot guarantee the absolute security of our systems.
+                                </p>
+                            </div>
+                        </section>
+
+                        <!-- Section 6 -->
+                        <section id="your-rights" class="content-section">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center font-bold">
+                                    6
+                                </div>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-900">Your Rights & Choices</h2>
+                            </div>
+                            <div class="prose prose-lg max-w-none">
+                                <p>
+                                    Depending on your location, you may have the following rights regarding your personal information:
+                                </p>
+
+                                <div class="overflow-x-auto my-6">
+                                    <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                                        <thead class="bg-slate-100">
+                                            <tr>
+                                                <th class="py-3 px-4 text-left font-bold text-slate-900">Right</th>
+                                                <th class="py-3 px-4 text-left font-bold text-slate-900">Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-200">
+                                            <tr>
+                                                <td class="py-3 px-4 font-medium">Access</td>
+                                                <td class="py-3 px-4">Request a copy of your personal information</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-3 px-4 font-medium">Correction</td>
+                                                <td class="py-3 px-4">Update or correct inaccurate information</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-3 px-4 font-medium">Deletion</td>
+                                                <td class="py-3 px-4">Request deletion of your personal information</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-3 px-4 font-medium">Portability</td>
+                                                <td class="py-3 px-4">Receive your data in a structured format</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-3 px-4 font-medium">Objection</td>
+                                                <td class="py-3 px-4">Object to certain data processing activities</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-3 px-4 font-medium">Withdraw Consent</td>
+                                                <td class="py-3 px-4">Withdraw consent at any time</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <p>
+                                    To exercise your rights, please contact us using the information provided in the 
+                                    "Contact Us" section. We will respond to your request within 30 days.
+                                </p>
+                            </div>
+                        </section>
+
+                        <!-- Section 7 -->
+                        <section id="cookies" class="content-section">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center font-bold">
+                                    7
+                                </div>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-900">Cookies & Tracking</h2>
+                            </div>
+                            <div class="prose prose-lg max-w-none">
+                                <p>
+                                    We use cookies and similar tracking technologies to enhance your experience, analyze 
+                                    usage, and deliver personalized content.
+                                </p>
+
+                                <h3 class="text-xl font-bold text-slate-900 mt-6 mb-4">Types of Cookies We Use</h3>
+                                <ul>
+                                    <li><strong>Essential Cookies:</strong> Required for basic platform functionality</li>
+                                    <li><strong>Performance Cookies:</strong> Help us understand how users interact with our platform</li>
+                                    <li><strong>Functional Cookies:</strong> Remember your preferences and settings</li>
+                                    <li><strong>Advertising Cookies:</strong> Deliver relevant advertisements (with your consent)</li>
+                                </ul>
+
+                                <h3 class="text-xl font-bold text-slate-900 mt-6 mb-4">Cookie Management</h3>
+                                <p>
+                                    You can control cookies through your browser settings. Most browsers allow you to:
+                                </p>
+                                <ul>
+                                    <li>View cookies stored on your device</li>
+                                    <li>Delete cookies individually or all at once</li>
+                                    <li>Block cookies from specific websites</li>
+                                    <li>Block all cookies or third-party cookies</li>
+                                </ul>
+
+                                <div class="bg-slate-50 rounded-xl p-5 my-6 border border-slate-200">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="font-bold text-slate-900">Cookie Preferences</h4>
+                                            <p class="text-slate-600 text-sm">Manage your cookie settings</p>
+                                        </div>
+                                        <button @click="openCookieSettings" 
+                                                class="bg-white border border-slate-300 text-slate-700 font-medium px-4 py-2 rounded-lg hover:bg-slate-50 transition">
+                                            Manage Cookies
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Section 8 -->
+                        <section id="children-privacy" class="content-section">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center font-bold">
+                                    8
+                                </div>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-900">Children's Privacy</h2>
+                            </div>
+                            <div class="prose prose-lg max-w-none">
+                                <p>
+                                    PlasicLMS is not intended for children under the age of 16. We do not knowingly 
+                                    collect personal information from children under 16.
+                                </p>
+                                <p>
+                                    If you are a parent or guardian and believe that your child has provided us with 
+                                    personal information, please contact us immediately. We will take steps to delete 
+                                    such information from our systems.
+                                </p>
+                                <p>
+                                    For educational institutions using our platform for students under 16, we comply 
+                                    with additional requirements such as the Children's Online Privacy Protection Act (COPPA).
+                                </p>
+                            </div>
+                        </section>
+
+                        <!-- Section 9 -->
+                        <section id="changes" class="content-section">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center font-bold">
+                                    9
+                                </div>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-900">Policy Changes</h2>
+                            </div>
+                            <div class="prose prose-lg max-w-none">
+                                <p>
+                                    We may update this Privacy Policy from time to time to reflect changes in our 
+                                    practices, services, or legal requirements. When we make material changes, we will:
+                                </p>
+                                <ul>
+                                    <li>Post the updated policy on this page</li>
+                                    <li>Update the "Last Updated" date at the top of this page</li>
+                                    <li>Notify you via email or platform notification for significant changes</li>
+                                </ul>
+                                <p>
+                                    We encourage you to review this Privacy Policy periodically to stay informed 
+                                    about how we protect your information.
+                                </p>
+                            </div>
+                        </section>
+
+                        <!-- Section 10 -->
+                        <section id="contact" class="content-section">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center font-bold">
+                                    10
+                                </div>
+                                <h2 class="text-2xl lg:text-3xl font-bold text-slate-900">Contact Us</h2>
+                            </div>
+                            <div class="prose prose-lg max-w-none">
+                                <p>
+                                    If you have questions, concerns, or requests regarding this Privacy Policy or 
+                                    our data practices, please contact us:
+                                </p>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                                    <div class="bg-white rounded-xl p-6 border border-slate-200">
+                                        <div class="w-12 h-12 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center mb-4">
+                                            <i class="ph ph-envelope-simple text-xl"></i>
+                                        </div>
+                                        <h4 class="font-bold text-slate-900 mb-2">Email</h4>
+                                        <a href="mailto:privacy@plasiclms.com" class="text-brand-600 hover:text-brand-700">
+                                            privacy@plasiclms.com
+                                        </a>
+                                    </div>
+                                    <div class="bg-white rounded-xl p-6 border border-slate-200">
+                                        <div class="w-12 h-12 rounded-lg bg-brand-100 text-brand-600 flex items-center justify-center mb-4">
+                                            <i class="ph ph-phone text-xl"></i>
+                                        </div>
+                                        <h4 class="font-bold text-slate-900 mb-2">Phone</h4>
+                                        <a href="tel:+1-555-123-4567" class="text-brand-600 hover:text-brand-700">
+                                            +1 (555) 123-4567
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="bg-slate-50 rounded-xl p-6 border border-slate-200">
+                                    <h4 class="font-bold text-slate-900 mb-4">Data Protection Officer</h4>
+                                    <p class="mb-4">
+                                        For users in the European Union, you may contact our Data Protection Officer (DPO) 
+                                        for privacy-related matters:
+                                    </p>
+                                    <p>
+                                        <strong>Email:</strong> dpo@plasiclms.com<br>
+                                        <strong>Address:</strong> 123 Privacy Street, Data Protection City, EU 12345
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Call to Action -->
+                    <div class="mt-16 p-8 bg-gradient-to-r from-brand-600 to-emerald-500 rounded-2xl text-white">
+                        <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">Have Privacy Questions?</h3>
+                                <p class="text-white/90">We're here to help protect your data and answer your questions.</p>
+                            </div>
+                            <a href="contact.html" 
+                               class="bg-white text-brand-600 font-bold px-8 py-3 rounded-xl hover:bg-slate-100 transition whitespace-nowrap">
+                                Contact Privacy Team
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center">
+							<i class="ph ph-graduation-cap text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-black text-white">PlasicLMS</span>
+                    </div>
+                    <p class="text-slate-400 mb-6">
+                        Empowering learners worldwide with accessible, high-quality education.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition">
+                            <i class="ph ph-twitter-logo text-xl"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition">
+                            <i class="ph ph-facebook-logo text-xl"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition">
+                            <i class="ph ph-linkedin-logo text-xl"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition">
+                            <i class="ph ph-instagram-logo text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Platform</h4>
+                    <ul class="space-y-3">
+                        <li><a href="courses.html" class="text-slate-400 hover:text-white transition">Courses</a></li>
+                        <li><a href="pricing.html" class="text-slate-400 hover:text-white transition">Pricing</a></li>
+                        <li><a href="instructors.html" class="text-slate-400 hover:text-white transition">For Instructors</a></li>
+                        <li><a href="enterprise.html" class="text-slate-400 hover:text-white transition">Enterprise</a></li>
+                        <li><a href="affiliate.html" class="text-slate-400 hover:text-white transition">Affiliate Program</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Resources</h4>
+                    <ul class="space-y-3">
+                        <li><a href="blog.html" class="text-slate-400 hover:text-white transition">Blog</a></li>
+                        <li><a href="help.html" class="text-slate-400 hover:text-white transition">Help Center</a></li>
+                        <li><a href="community.html" class="text-slate-400 hover:text-white transition">Community</a></li>
+                        <li><a href="webinars.html" class="text-slate-400 hover:text-white transition">Webinars</a></li>
+                        <li><a href="tutorials.html" class="text-slate-400 hover:text-white transition">Tutorials</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Legal</h4>
+                    <ul class="space-y-3">
+                        <li><a href="terms.html" class="text-slate-400 hover:text-white transition">Terms of Service</a></li>
+                        <li><a href="privacy.html" class="text-slate-400 hover:text-white transition font-semibold text-white">Privacy Policy</a></li>
+                        <li><a href="cookies.html" class="text-slate-400 hover:text-white transition">Cookie Policy</a></li>
+                        <li><a href="gdpr.html" class="text-slate-400 hover:text-white transition">GDPR Compliance</a></li>
+                        <li><a href="security.html" class="text-slate-400 hover:text-white transition">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-slate-500 text-sm mb-4 md:mb-0">
+                    © 2024 PlasicLMS. All rights reserved.
+                </p>
+                <div class="flex gap-6 text-sm text-slate-500">
+                    <a href="sitemap.html" class="hover:text-white transition">Sitemap</a>
+                    <a href="accessibility.html" class="hover:text-white transition">Accessibility</a>
+                    <a href="contact.html" class="hover:text-white transition">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cookie Settings Modal -->
+    <div x-show="cookieModalOpen" @click.away="cookieModalOpen = false" 
+         class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" x-cloak>
+        <div class="bg-white rounded-2xl max-w-md w-full p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-slate-900">Cookie Preferences</h3>
+                <button @click="cookieModalOpen = false" class="text-slate-500 hover:text-slate-700">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                    <div>
+                        <h4 class="font-medium text-slate-900">Essential Cookies</h4>
+                        <p class="text-sm text-slate-600">Required for basic functionality</p>
+                    </div>
+                    <div class="relative">
+                        <input type="checkbox" checked disabled class="sr-only">
+                        <div class="w-12 h-6 bg-brand-600 rounded-full"></div>
+                        <div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                    <div>
+                        <h4 class="font-medium text-slate-900">Performance Cookies</h4>
+                        <p class="text-sm text-slate-600">Help us improve our platform</p>
+                    </div>
+                    <div class="relative cursor-pointer" @click="toggleCookie('performance')">
+                        <input type="checkbox" x-model="cookies.performance" class="sr-only">
+                        <div class="w-12 h-6 rounded-full transition" 
+                             :class="cookies.performance ? 'bg-brand-600' : 'bg-slate-300'"></div>
+                        <div class="absolute top-1 w-4 h-4 bg-white rounded-full transition-transform" 
+                             :class="cookies.performance ? 'transform translate-x-7' : 'transform translate-x-1'"></div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                    <div>
+                        <h4 class="font-medium text-slate-900">Advertising Cookies</h4>
+                        <p class="text-sm text-slate-600">Personalize advertisements</p>
+                    </div>
+                    <div class="relative cursor-pointer" @click="toggleCookie('advertising')">
+                        <input type="checkbox" x-model="cookies.advertising" class="sr-only">
+                        <div class="w-12 h-6 rounded-full transition" 
+                             :class="cookies.advertising ? 'bg-brand-600' : 'bg-slate-300'"></div>
+                        <div class="absolute top-1 w-4 h-4 bg-white rounded-full transition-transform" 
+                             :class="cookies.advertising ? 'transform translate-x-7' : 'transform translate-x-1'"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 flex gap-3">
+                <button @click="saveCookiePreferences" 
+                        class="flex-1 bg-brand-600 text-white font-medium py-3 rounded-lg hover:bg-brand-700 transition">
+                    Save Preferences
+                </button>
+                <button @click="acceptAllCookies" 
+                        class="flex-1 bg-slate-200 text-slate-700 font-medium py-3 rounded-lg hover:bg-slate-300 transition">
+                    Accept All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alpine.js Data & Methods -->
+    <script>
+        function privacyPolicy() {
+            return {
+                mobileMenuOpen: false,
+                cookieModalOpen: false,
+                activeSection: 'introduction',
+                cookies: {
+                    performance: false,
+                    advertising: false
+                },
+                
+                init() {
+                    // Set up scroll spy for table of contents
+                    this.setupScrollSpy();
+                    
+                    // Check for saved cookie preferences
+                    this.loadCookiePreferences();
+                },
+                
+                setupScrollSpy() {
+                    const sections = document.querySelectorAll('.content-section');
+                    const observer = new IntersectionObserver(
+                        (entries) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    this.activeSection = entry.target.id;
+                                }
+                            });
+                        },
+                        { threshold: 0.5 }
+                    );
+                    
+                    sections.forEach(section => observer.observe(section));
+                },
+                
+                scrollToSection(sectionId) {
+                    const element = document.getElementById(sectionId);
+                    if (element) {
+                        const headerOffset = 100;
+                        const elementPosition = element.offsetTop;
+                        const offsetPosition = elementPosition - headerOffset;
+                        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                },
+                
+                printPage() {
+                    window.print();
+                },
+                
+                downloadPDF() {
+                    alert('PDF download functionality would be implemented here.\nIn a real application, this would generate and download a PDF version of the privacy policy.');
+                },
+                
+                openCookieSettings() {
+                    this.cookieModalOpen = true;
+                },
+                
+                toggleCookie(type) {
+                    this.cookies[type] = !this.cookies[type];
+                },
+                
+                loadCookiePreferences() {
+                    const saved = localStorage.getItem('cookiePreferences');
+                    if (saved) {
+                        this.cookies = JSON.parse(saved);
+                    }
+                },
+                
+                saveCookiePreferences() {
+                    localStorage.setItem('cookiePreferences', JSON.stringify(this.cookies));
+                    this.cookieModalOpen = false;
+                    this.showNotification('Cookie preferences saved successfully!');
+                },
+                
+                acceptAllCookies() {
+                    this.cookies.performance = true;
+                    this.cookies.advertising = true;
+                    this.saveCookiePreferences();
+                },
+                
+                showNotification(message) {
+                    // Create notification element
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in';
+                    notification.textContent = message;
+                    
+                    document.body.appendChild(notification);
+                    
+                    // Remove after 3 seconds
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 3000);
+                }
+            }
+        }
+    </script>
+
+    <!-- Notification Animation -->
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+        
+        [x-cloak] { display: none !important; }
+    </style>
+</body>
+</html>
