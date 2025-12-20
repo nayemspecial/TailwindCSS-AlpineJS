@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - PlasicLMS</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 
+                            50: '#f0fdf4', 
+                            100: '#dcfce7', 
+                            500: '#22c55e', 
+                            600: '#16a34a', 
+                            700: '#15803d',
+                            800: '#166534'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; 
+            overflow-x: hidden; 
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #22c55e;
+            border-radius: 4px;
+        }
+
+        /* Background Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .floating-element {
+            animation: float 8s ease-in-out infinite;
+        }
+
+        /* Form Focus */
+        .form-input:focus, .form-textarea:focus {
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+            border-color: #22c55e;
+        }
+
+        /* Map Container */
+        .map-container {
+            filter: sepia(0.2) hue-rotate(130deg) saturate(0.8);
+        }
+
+        /* Contact Card Hover */
+        .contact-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .contact-card:hover {
+            transform: translateY(-5px);
+            border-color: #22c55e;
+            box-shadow: 0 15px 30px rgba(34, 197, 94, 0.1);
+        }
+
+        /* Success Animation */
+        @keyframes success-bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        .success-bounce {
+            animation: success-bounce 1s ease;
+        }
+    </style>
+</head>
+<body x-data="contactApp()" x-init="init()">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-sm border-b border-slate-100">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center">
+                        <i class="ph ph-graduation-cap text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-black text-slate-900">PlasicLMS</span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center gap-8">
+                    <a href="index.html" class="text-slate-700 hover:text-brand-600 font-semibold transition">Home</a>
+                    <a href="courses.html" class="text-slate-700 hover:text-brand-600 font-semibold transition">Courses</a>
+                    <a href="about.html" class="text-slate-700 hover:text-brand-600 font-semibold transition">About</a>
+                    <a href="contact.html" class="text-brand-600 font-semibold border-b-2 border-brand-600">Contact</a>
+                    <a href="login.html" class="text-slate-700 hover:text-brand-600 font-semibold transition">Sign In</a>
+                </div>
+
+                <!-- CTA Button -->
+                <a href="signup.html" class="bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold px-6 py-2.5 rounded-xl hover:shadow-lg hover:shadow-brand-500/30 transition">
+                    Get Started
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-gradient-to-b from-white to-slate-50">
+        <div class="container mx-auto px-6">
+            <div class="max-w-3xl mx-auto text-center">
+                <h1 class="text-4xl lg:text-5xl font-black text-slate-900 mb-6">
+                    Get in <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-emerald-500">Touch</span>
+                </h1>
+                <p class="text-xl text-slate-600 mb-8">
+                    We're here to help and answer any questions you might have. We look forward to hearing from you.
+                </p>
+                
+                <!-- Stats -->
+                <div class="grid grid-cols-3 gap-6 max-w-2xl mx-auto">
+                    <div class="text-center">
+                        <div class="text-2xl font-black text-brand-600 mb-2">24/7</div>
+                        <div class="text-slate-600 font-medium">Support</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-black text-blue-600 mb-2">2h</div>
+                        <div class="text-slate-600 font-medium">Avg Response Time</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-black text-purple-600 mb-2">98%</div>
+                        <div class="text-slate-600 font-medium">Satisfaction Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div class="bg-white rounded-2xl p-8 shadow-xl">
+                    <h2 class="text-3xl font-black text-slate-900 mb-2">Send us a message</h2>
+                    <p class="text-slate-600 mb-8">
+                        Fill out the form below and we'll get back to you as soon as possible.
+                    </p>
+
+                    <form @submit.prevent="handleSubmit" class="space-y-6">
+                        <!-- Name & Email -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    Your Name *
+                                </label>
+                                <input type="text" 
+                                       x-model="form.name"
+                                       required
+                                       class="w-full form-input px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none transition"
+                                       placeholder="John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">
+                                    Email Address *
+                                </label>
+                                <input type="email" 
+                                       x-model="form.email"
+                                       required
+                                       class="w-full form-input px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none transition"
+                                       placeholder="you@example.com">
+                            </div>
+                        </div>
+
+                        <!-- Subject -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                Subject *
+                            </label>
+                            <select x-model="form.subject"
+                                    required
+                                    class="w-full form-input px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none transition">
+                                <option value="">Select a subject</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="technical">Technical Support</option>
+                                <option value="billing">Billing & Payment</option>
+                                <option value="course">Course Information</option>
+                                <option value="partnership">Partnership Opportunity</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Message -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                Your Message *
+                            </label>
+                            <textarea x-model="form.message"
+                                      required
+                                      rows="6"
+                                      class="w-full form-textarea px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none transition resize-none"
+                                      placeholder="How can we help you?"></textarea>
+                        </div>
+
+                        <!-- Attachment -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                Attachment (Optional)
+                            </label>
+                            <div class="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:border-brand-500 transition cursor-pointer"
+                                 @click="document.getElementById('fileInput').click()"
+                                 @dragover.prevent
+                                 @drop.prevent="handleFileDrop">
+                                <input type="file" 
+                                       id="fileInput"
+                                       @change="handleFileSelect"
+                                       class="hidden"
+                                       multiple>
+                                
+                                <i class="ph ph-paperclip text-3xl text-slate-400 mb-3"></i>
+                                <p class="text-slate-600 mb-2">
+                                    <span class="text-brand-600 font-medium">Click to upload</span> or drag and drop
+                                </p>
+                                <p class="text-sm text-slate-500">
+                                    Max file size: 10MB • Supports: PDF, DOC, JPG, PNG
+                                </p>
+                                
+                                <!-- Selected Files -->
+                                <div x-show="form.files.length > 0" class="mt-4 space-y-2">
+                                    <template x-for="(file, index) in form.files" :key="index">
+                                        <div class="flex items-center justify-between bg-slate-100 px-3 py-2 rounded-lg">
+                                            <div class="flex items-center gap-2">
+                                                <i class="ph ph-file-text text-slate-600"></i>
+                                                <span class="text-sm text-slate-700 truncate" x-text="file.name"></span>
+                                                <span class="text-xs text-slate-500" x-text="formatFileSize(file.size)"></span>
+                                            </div>
+                                            <button type="button" 
+                                                    @click="removeFile(index)"
+                                                    class="text-slate-400 hover:text-red-500">
+                                                <i class="ph ph-x"></i>
+                                            </button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                                :disabled="loading"
+                                :class="loading ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-lg'"
+                                class="w-full bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold py-4 rounded-lg transition-all duration-300">
+                            <span x-show="!loading">Send Message</span>
+                            <span x-show="loading" class="flex items-center justify-center gap-2">
+                                <i class="ph ph-circle-notch animate-spin"></i>
+                                Sending...
+                            </span>
+                        </button>
+
+                        <!-- Privacy Note -->
+                        <p class="text-sm text-slate-500 text-center">
+                            By submitting this form, you agree to our 
+                            <a href="privacy.html" class="text-brand-600 hover:text-brand-700">Privacy Policy</a>. 
+                            We'll never share your information.
+                        </p>
+                    </form>
+                </div>
+
+                <!-- Contact Information & FAQ -->
+                <div class="space-y-8">
+                    <!-- Contact Info Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Email -->
+                        <div class="contact-card bg-white rounded-xl p-6">
+                            <div class="w-12 h-12 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
+                                <i class="ph ph-envelope-simple text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-2">Email Us</h3>
+                            <p class="text-slate-600 mb-4">For general inquiries and support</p>
+                            <a href="mailto:support@plasiclms.com" class="text-brand-600 font-bold hover:text-brand-700">
+                                support@plasiclms.com
+                            </a>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="contact-card bg-white rounded-xl p-6">
+                            <div class="w-12 h-12 rounded-lg bg-green-100 text-green-600 flex items-center justify-center mb-4">
+                                <i class="ph ph-phone text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-2">Call Us</h3>
+                            <p class="text-slate-600 mb-4">Mon-Fri, 9:00 AM - 6:00 PM EST</p>
+                            <a href="tel:+8801234567890" class="text-brand-600 font-bold hover:text-brand-700">
+                                +880 1234 567890
+                            </a>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="contact-card bg-white rounded-xl p-6 md:col-span-2">
+                            <div class="w-12 h-12 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center mb-4">
+                                <i class="ph ph-map-pin text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-2">Visit Us</h3>
+                            <p class="text-slate-600 mb-2">ProjuktiPlus Academy, Dhaka, Bangladesh</p>
+                            <p class="text-sm text-slate-500">123 Learning Street, Digital District</p>
+                        </div>
+                    </div>
+
+                    <!-- Map -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-lg">
+                        <div class="h-64 map-container relative">
+                            <!-- Simple Map Visualization -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-emerald-50 flex items-center justify-center">
+                                <div class="text-center">
+                                    <i class="ph ph-map-trifold text-6xl text-brand-600 opacity-50 mb-4"></i>
+                                    <p class="text-slate-600 font-medium">Dhaka, Bangladesh</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ -->
+                    <div class="bg-white rounded-xl p-6">
+                        <h3 class="text-xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <button @click="toggleFAQ(0)"
+                                        class="flex items-center justify-between w-full text-left text-slate-800 font-medium hover:text-brand-600">
+                                    <span>How long does it take to get a response?</span>
+                                    <i class="ph ph-caret-down" :class="activeFAQ === 0 ? 'rotate-180' : ''"></i>
+                                </button>
+                                <div x-show="activeFAQ === 0" x-transition class="mt-2 text-slate-600">
+                                    We typically respond within 2 hours during business hours (9 AM - 6 PM EST, Monday to Friday).
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <button @click="toggleFAQ(1)"
+                                        class="flex items-center justify-between w-full text-left text-slate-800 font-medium hover:text-brand-600">
+                                    <span>Do you offer phone support?</span>
+                                    <i class="ph ph-caret-down" :class="activeFAQ === 1 ? 'rotate-180' : ''"></i>
+                                </button>
+                                <div x-show="activeFAQ === 1" x-transition class="mt-2 text-slate-600">
+                                    Yes, phone support is available Monday to Friday from 9 AM to 6 PM EST.
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <button @click="toggleFAQ(2)"
+                                        class="flex items-center justify-between w-full text-left text-slate-800 font-medium hover:text-brand-600">
+                                    <span>Can I get a refund for my course?</span>
+                                    <i class="ph ph-caret-down" :class="activeFAQ === 2 ? 'rotate-180' : ''"></i>
+                                </button>
+                                <div x-show="activeFAQ === 2" x-transition class="mt-2 text-slate-600">
+                                    We offer a 30-day money-back guarantee for all courses. Contact our billing team for refund requests.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a href="faq.html" class="inline-flex items-center gap-2 text-brand-600 font-medium mt-4 hover:text-brand-700">
+                            View all FAQs <i class="ph ph-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-slate-900 to-slate-800 text-white">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-4xl font-black mb-6">Still have questions?</h2>
+                <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+                    Check our comprehensive help center for detailed guides and tutorials.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="help.html" class="px-8 py-4 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition">
+                        Visit Help Center
+                    </a>
+                    <a href="mailto:support@plasiclms.com" class="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-xl hover:bg-white/10 transition">
+                        Email Support Team
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center">
+                            <i class="ph ph-graduation-cap text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-black">PlasicLMS</span>
+                    </div>
+                    <p class="text-slate-400 mb-6">
+                        Empowering learners worldwide with interactive, engaging, and effective online education.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-brand-600 flex items-center justify-center transition">
+                            <i class="ph ph-twitter-logo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-brand-600 flex items-center justify-center transition">
+                            <i class="ph ph-facebook-logo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-brand-600 flex items-center justify-center transition">
+                            <i class="ph ph-linkedin-logo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 hover:bg-brand-600 flex items-center justify-center transition">
+                            <i class="ph ph-instagram-logo"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="index.html" class="text-slate-400 hover:text-white transition">Home</a></li>
+                        <li><a href="courses.html" class="text-slate-400 hover:text-white transition">Courses</a></li>
+                        <li><a href="about.html" class="text-slate-400 hover:text-white transition">About Us</a></li>
+                        <li><a href="contact.html" class="text-brand-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Support -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Support</h4>
+                    <ul class="space-y-3">
+                        <li><a href="help.html" class="text-slate-400 hover:text-white transition">Help Center</a></li>
+                        <li><a href="faq.html" class="text-slate-400 hover:text-white transition">FAQ</a></li>
+                        <li><a href="terms.html" class="text-slate-400 hover:text-white transition">Terms of Service</a></li>
+                        <li><a href="privacy.html" class="text-slate-400 hover:text-white transition">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Info -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Contact Info</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-2 text-slate-400">
+                            <i class="ph ph-envelope-simple"></i>
+                            support@plasiclms.com
+                        </li>
+                        <li class="flex items-center gap-2 text-slate-400">
+                            <i class="ph ph-phone"></i>
+                            +880 1234 567890
+                        </li>
+                        <li class="flex items-center gap-2 text-slate-400">
+                            <i class="ph ph-map-pin"></i>
+                            Dhaka, Bangladesh
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-800 mt-12 pt-8 text-center text-slate-500">
+                <p>&copy; 2024 PlasicLMS. All rights reserved. Made with <i class="ph ph-heart text-red-500"></i> for learners worldwide.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Toast -->
+    <div x-show="showSuccessToast" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="translate-x-full"
+         x-transition:enter-end="translate-x-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="translate-x-0"
+         x-transition:leave-end="translate-x-full"
+         class="fixed bottom-6 right-6 bg-white rounded-xl shadow-2xl p-6 max-w-sm z-50 border border-slate-200">
+        <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 success-bounce">
+                <i class="ph ph-check-circle text-2xl text-green-600"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-slate-900 mb-1">Message Sent Successfully!</h3>
+                <p class="text-slate-600 mb-3">We'll get back to you within 2 hours.</p>
+                <div class="flex gap-3">
+                    <button @click="showSuccessToast = false" 
+                            class="text-sm text-slate-500 hover:text-slate-700">
+                        Dismiss
+                    </button>
+                    <a href="index.html" class="text-sm text-brand-600 hover:text-brand-700 font-medium">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function contactApp() {
+            return {
+                // Form Data
+                form: {
+                    name: '',
+                    email: '',
+                    subject: '',
+                    message: '',
+                    files: []
+                },
+                
+                // UI State
+                loading: false,
+                activeFAQ: null,
+                showSuccessToast: false,
+                
+                // Methods
+                init() {
+                    console.log('Contact page initialized');
+                },
+                
+                async handleSubmit() {
+                    // Basic validation
+                    if (!this.form.name || !this.form.email || !this.form.subject || !this.form.message) {
+                        alert('Please fill in all required fields');
+                        return;
+                    }
+                    
+                    // Email validation
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(this.form.email)) {
+                        alert('Please enter a valid email address');
+                        return;
+                    }
+                    
+                    this.loading = true;
+                    
+                    try {
+                        // Simulate API call
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        
+                        // Log form data (in real app, send to backend)
+                        console.log('Contact form submitted:', {
+                            ...this.form,
+                            files: this.form.files.map(f => f.name)
+                        });
+                        
+                        // Show success toast
+                        this.showSuccessToast = true;
+                        
+                        // Auto-hide toast after 5 seconds
+                        setTimeout(() => {
+                            this.showSuccessToast = false;
+                        }, 5000);
+                        
+                        // Reset form
+                        this.resetForm();
+                        
+                    } catch (error) {
+                        console.error('Submission error:', error);
+                        alert('Failed to send message. Please try again.');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                
+                handleFileSelect(event) {
+                    const files = Array.from(event.target.files);
+                    this.validateAndAddFiles(files);
+                    event.target.value = ''; // Reset input
+                },
+                
+                handleFileDrop(event) {
+                    const files = Array.from(event.dataTransfer.files);
+                    this.validateAndAddFiles(files);
+                },
+                
+                validateAndAddFiles(files) {
+                    const validTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                    const maxSize = 10 * 1024 * 1024; // 10MB
+                    
+                    files.forEach(file => {
+                        // Check file type
+                        if (!validTypes.includes(file.type)) {
+                            alert(`File "${file.name}" has an unsupported format. Please upload PDF, DOC, JPG, or PNG files.`);
+                            return;
+                        }
+                        
+                        // Check file size
+                        if (file.size > maxSize) {
+                            alert(`File "${file.name}" exceeds the 10MB size limit.`);
+                            return;
+                        }
+                        
+                        // Add to files array
+                        this.form.files.push(file);
+                    });
+                },
+                
+                removeFile(index) {
+                    this.form.files.splice(index, 1);
+                },
+                
+                formatFileSize(bytes) {
+                    if (bytes === 0) return '0 Bytes';
+                    const k = 1024;
+                    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                },
+                
+                toggleFAQ(index) {
+                    this.activeFAQ = this.activeFAQ === index ? null : index;
+                },
+                
+                resetForm() {
+                    this.form = {
+                        name: '',
+                        email: '',
+                        subject: '',
+                        message: '',
+                        files: []
+                    };
+                }
+            }
+        }
+    </script>
+</body>
+</html>
