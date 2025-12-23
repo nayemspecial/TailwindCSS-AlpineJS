@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - PlasicLMS</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 
+                            50: '#f0fdf4', 
+                            100: '#dcfce7', 
+                            500: '#22c55e', 
+                            600: '#16a34a', 
+                            700: '#15803d',
+                            800: '#166534'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f8fafc; 
+            overflow-x: hidden; 
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #22c55e;
+            border-radius: 4px;
+        }
+
+        /* FAQ Item Animation */
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+
+        /* Search Highlight */
+        .highlight {
+            background-color: #fef3c7;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body x-data="faqApp()" x-init="init()">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="index.html" class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center">
+                        <i class="ph ph-graduation-cap text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-black text-slate-900">PlasicLMS</span>
+                </a>
+
+                <!-- Navigation Links -->
+                <div class="hidden lg:flex items-center gap-8">
+                    <a href="index.html" class="text-slate-700 hover:text-brand-600 font-medium">Home</a>
+                    <a href="courses.html" class="text-slate-700 hover:text-brand-600 font-medium">Courses</a>
+                    <a href="pricing.html" class="text-slate-700 hover:text-brand-600 font-medium">Pricing</a>
+                    <a href="faq.html" class="text-brand-600 font-medium">FAQ</a>
+                    <a href="contact.html" class="text-slate-700 hover:text-brand-600 font-medium">Contact</a>
+                </div>
+
+                <!-- Auth Buttons -->
+                <div class="flex items-center gap-4">
+                    <a href="login.html" class="text-slate-700 hover:text-brand-600 font-medium px-4 py-2 hidden lg:block">
+                        Sign In
+                    </a>
+                    <a href="signup.html" class="bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-brand-500/30 transition">
+                        Get Started
+                    </a>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden text-slate-700 p-2">
+                        <i class="ph ph-list text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false" 
+         class="lg:hidden fixed inset-0 z-40 bg-white pt-20" x-transition>
+        <div class="container mx-auto px-6 py-8">
+            <div class="space-y-6">
+                <a href="index.html" @click="mobileMenuOpen = false" class="block text-lg font-medium text-slate-800 hover:text-brand-600 py-2">Home</a>
+                <a href="courses.html" @click="mobileMenuOpen = false" class="block text-lg font-medium text-slate-800 hover:text-brand-600 py-2">Courses</a>
+                <a href="pricing.html" @click="mobileMenuOpen = false" class="block text-lg font-medium text-slate-800 hover:text-brand-600 py-2">Pricing</a>
+                <a href="faq.html" @click="mobileMenuOpen = false" class="block text-lg font-medium text-brand-600 py-2">FAQ</a>
+                <a href="contact.html" @click="mobileMenuOpen = false" class="block text-lg font-medium text-slate-800 hover:text-brand-600 py-2">Contact</a>
+                
+                <div class="pt-6 border-t border-slate-200 space-y-4">
+                    <a href="login.html" class="block text-center text-lg font-medium text-slate-800 hover:text-brand-600 py-3">Sign In</a>
+                    <a href="signup.html" class="block text-center bg-gradient-to-r from-brand-600 to-emerald-500 text-white font-bold rounded-xl py-3 hover:shadow-lg">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <section class="py-12 lg:py-16 bg-gradient-to-b from-white to-slate-50">
+        <div class="container mx-auto px-6">
+            <div class="max-w-3xl mx-auto text-center">
+                <!-- Breadcrumb -->
+                <div class="flex items-center justify-center gap-2 text-sm text-slate-500 mb-8">
+                    <a href="index.html" class="hover:text-brand-600">Home</a>
+                    <i class="ph ph-caret-right"></i>
+                    <span class="text-slate-700 font-medium">FAQ</span>
+                </div>
+
+                <h1 class="text-4xl lg:text-5xl font-black text-slate-900 mb-6">
+                    Frequently Asked <span class="text-brand-600">Questions</span>
+                </h1>
+                <p class="text-xl text-slate-600 mb-10">
+                    Find quick answers to common questions about PlasicLMS. Can't find what you're looking for?
+                    <a href="contact.html" class="text-brand-600 hover:text-brand-700 font-medium">Contact our support team</a>.
+                </p>
+
+                <!-- Search Bar -->
+                <div class="max-w-2xl mx-auto mb-12">
+                    <div class="relative">
+                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400">
+                            <i class="ph ph-magnifying-glass text-xl"></i>
+                        </div>
+                        <input type="text" 
+                               x-model="searchQuery"
+                               @input="filterFAQs()"
+                               placeholder="Search questions or topics..."
+                               class="w-full pl-12 pr-4 py-4 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-brand-500 transition shadow-sm">
+                        <div x-show="searchQuery" @click="clearSearch()"
+                             class="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer text-slate-400 hover:text-slate-600">
+                            <i class="ph ph-x text-xl"></i>
+                        </div>
+                    </div>
+                    <p x-show="searchQuery" class="text-sm text-slate-500 mt-2">
+                        Found <span class="font-bold text-brand-600" x-text="filteredFAQs.length"></span> results for "<span x-text="searchQuery"></span>"
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <button @click="filterByCategory('general')" 
+                            :class="activeCategory === 'general' ? 'bg-brand-600 text-white' : 'bg-white text-slate-700 border border-slate-200'"
+                            class="px-5 py-2 rounded-lg font-medium transition hover:shadow-sm">
+                        General
+                    </button>
+                    <button @click="filterByCategory('account')" 
+                            :class="activeCategory === 'account' ? 'bg-brand-600 text-white' : 'bg-white text-slate-700 border border-slate-200'"
+                            class="px-5 py-2 rounded-lg font-medium transition hover:shadow-sm">
+                        Account & Billing
+                    </button>
+                    <button @click="filterByCategory('courses')" 
+                            :class="activeCategory === 'courses' ? 'bg-brand-600 text-white' : 'bg-white text-slate-700 border border-slate-200'"
+                            class="px-5 py-2 rounded-lg font-medium transition hover:shadow-sm">
+                        Courses
+                    </button>
+                    <button @click="filterByCategory('technical')" 
+                            :class="activeCategory === 'technical' ? 'bg-brand-600 text-white' : 'bg-white text-slate-700 border border-slate-200'"
+                            class="px-5 py-2 rounded-lg font-medium transition hover:shadow-sm">
+                        Technical Support
+                    </button>
+                    <button @click="filterByCategory('pricing')" 
+                            :class="activeCategory === 'pricing' ? 'bg-brand-600 text-white' : 'bg-white text-slate-700 border border-slate-200'"
+                            class="px-5 py-2 rounded-lg font-medium transition hover:shadow-sm">
+                        Pricing & Plans
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Content -->
+    <section class="py-12 lg:py-16">
+        <div class="container mx-auto px-6">
+            <!-- No Results Message -->
+            <div x-show="filteredFAQs.length === 0" class="text-center py-12">
+                <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-6">
+                    <i class="ph ph-question text-3xl text-slate-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-900 mb-4">No results found</h3>
+                <p class="text-slate-600 mb-8 max-w-md mx-auto">
+                    We couldn't find any questions matching "<span x-text="searchQuery" class="font-medium"></span>". 
+                    Try different keywords or browse the categories above.
+                </p>
+                <button @click="clearSearch()" class="text-brand-600 hover:text-brand-700 font-medium flex items-center gap-2 mx-auto">
+                    <i class="ph ph-arrow-counter-clockwise"></i>
+                    Clear search and show all questions
+                </button>
+            </div>
+
+            <!-- FAQ Grid -->
+            <div x-show="filteredFAQs.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                <template x-for="(faq, index) in filteredFAQs" :key="faq.id">
+                    <div class="faq-item bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition">
+                        <div class="flex items-start gap-4">
+                            <!-- Icon -->
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                                 :class="{
+                                     'bg-blue-100 text-blue-600': faq.category === 'general',
+                                     'bg-green-100 text-green-600': faq.category === 'account',
+                                     'bg-purple-100 text-purple-600': faq.category === 'courses',
+                                     'bg-orange-100 text-orange-600': faq.category === 'technical',
+                                     'bg-pink-100 text-pink-600': faq.category === 'pricing'
+                                 }">
+                                <i :class="faq.icon" class="text-xl"></i>
+                            </div>
+                            
+                            <!-- FAQ Content -->
+                            <div class="flex-1">
+                                <!-- Category Badge -->
+                                <span class="inline-block px-3 py-1 rounded-full text-xs font-medium mb-3"
+                                      :class="{
+                                          'bg-blue-50 text-blue-700': faq.category === 'general',
+                                          'bg-green-50 text-green-700': faq.category === 'account',
+                                          'bg-purple-50 text-purple-700': faq.category === 'courses',
+                                          'bg-orange-50 text-orange-700': faq.category === 'technical',
+                                          'bg-pink-50 text-pink-700': faq.category === 'pricing'
+                                      }">
+                                    <span x-text="getCategoryLabel(faq.category)"></span>
+                                </span>
+                                
+                                <!-- Question -->
+                                <button @click="toggleFAQ(index)" 
+                                        class="flex items-start justify-between w-full text-left group">
+                                    <h3 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-brand-600 transition"
+                                        x-html="highlightText(faq.question)"></h3>
+                                    <i :class="faq.open ? 'ph ph-caret-up' : 'ph ph-caret-down'" 
+                                       class="text-slate-400 ml-4 flex-shrink-0 mt-1"></i>
+                                </button>
+                                
+                                <!-- Answer (Collapsible) -->
+                                <div x-show="faq.open" x-collapse class="mt-4">
+                                    <div class="prose prose-slate max-w-none">
+                                        <p class="text-slate-600 mb-4" x-html="highlightText(faq.answer)"></p>
+                                        
+                                        <!-- Additional Info (if exists) -->
+                                        <div x-show="faq.additionalInfo" class="bg-slate-50 rounded-lg p-4 mt-4">
+                                            <div class="flex items-start gap-3">
+                                                <i class="ph ph-info text-brand-600 text-xl mt-1 flex-shrink-0"></i>
+                                                <div>
+                                                    <h4 class="font-bold text-slate-900 mb-2">Important Note</h4>
+                                                    <p class="text-slate-600 text-sm" x-html="highlightText(faq.additionalInfo)"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Related Links -->
+                                        <div x-show="faq.relatedLinks && faq.relatedLinks.length > 0" class="mt-6">
+                                            <h5 class="text-sm font-semibold text-slate-700 mb-3">Related Articles</h5>
+                                            <div class="space-y-2">
+                                                <template x-for="(link, linkIndex) in faq.relatedLinks" :key="linkIndex">
+                                                    <a :href="link.url" 
+                                                       class="flex items-center gap-2 text-sm text-brand-600 hover:text-brand-700 group">
+                                                        <i class="ph ph-arrow-right text-xs group-hover:translate-x-1 transition"></i>
+                                                        <span x-text="link.text"></span>
+                                                    </a>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Contact CTA -->
+            <div class="max-w-4xl mx-auto mt-16">
+                <div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-8 lg:p-12 text-white text-center">
+                    <div class="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-6">
+                        <i class="ph ph-headphones text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl lg:text-3xl font-black mb-4">Still have questions?</h3>
+                    <p class="text-slate-300 mb-8 max-w-2xl mx-auto">
+                        Our support team is here to help you. Get in touch with us and we'll respond within 24 hours.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="contact.html" 
+                           class="px-8 py-3 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition">
+                            Contact Support
+                        </a>
+                        <a href="mailto:support@plasiclms.com" 
+                           class="px-8 py-3 bg-transparent border-2 border-white text-white font-bold rounded-xl hover:bg-white/10 transition">
+                            <i class="ph ph-envelope-simple mr-2"></i>
+                            Email Us
+                        </a>
+                    </div>
+                    <p class="text-slate-400 text-sm mt-6">
+                        <i class="ph ph-clock mr-1"></i>
+                        Average response time: 2-4 hours during business days
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center">
+                            <i class="ph ph-graduation-cap text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-black text-slate-900">PlasicLMS</span>
+                    </div>
+                    <p class="text-slate-600 mb-6">
+                        Empowering learners worldwide with interactive, engaging, and effective online education.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-brand-600 hover:text-white flex items-center justify-center transition">
+                            <i class="ph ph-twitter-logo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-brand-600 hover:text-white flex items-center justify-center transition">
+                            <i class="ph ph-facebook-logo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-brand-600 hover:text-white flex items-center justify-center transition">
+                            <i class="ph ph-linkedin-logo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-brand-600 hover:text-white flex items-center justify-center transition">
+                            <i class="ph ph-instagram-logo"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-bold text-slate-900 mb-6">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="index.html" class="text-slate-600 hover:text-brand-600 transition">Home</a></li>
+                        <li><a href="courses.html" class="text-slate-600 hover:text-brand-600 transition">Courses</a></li>
+                        <li><a href="pricing.html" class="text-slate-600 hover:text-brand-600 transition">Pricing</a></li>
+                        <li><a href="about.html" class="text-slate-600 hover:text-brand-600 transition">About Us</a></li>
+                        <li><a href="blog.html" class="text-slate-600 hover:text-brand-600 transition">Blog</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Support -->
+                <div>
+                    <h4 class="text-lg font-bold text-slate-900 mb-6">Support</h4>
+                    <ul class="space-y-3">
+                        <li><a href="help.html" class="text-slate-600 hover:text-brand-600 transition">Help Center</a></li>
+                        <li><a href="faq.html" class="text-brand-600 font-medium transition">FAQ</a></li>
+                        <li><a href="contact.html" class="text-slate-600 hover:text-brand-600 transition">Contact Us</a></li>
+                        <li><a href="privacy.html" class="text-slate-600 hover:text-brand-600 transition">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="text-slate-600 hover:text-brand-600 transition">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Newsletter -->
+                <div>
+                    <h4 class="text-lg font-bold text-slate-900 mb-6">Stay Updated</h4>
+                    <p class="text-slate-600 mb-4">
+                        Subscribe to get updates on new courses and learning tips.
+                    </p>
+                    <div class="flex gap-2">
+                        <input type="email" placeholder="Your email" class="flex-1 bg-slate-100 border border-slate-200 rounded-lg px-4 py-3 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                        <button class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 rounded-lg transition">
+                            <i class="ph ph-paper-plane-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-200 mt-12 pt-8 text-center text-slate-500">
+                <p>&copy; 2024 PlasicLMS. All rights reserved. Made with <i class="ph ph-heart text-red-500"></i> for learners worldwide.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button x-show="showBackToTop" @click="scrollToTop" 
+            class="fixed bottom-6 right-6 w-12 h-12 bg-brand-600 text-white rounded-full shadow-lg hover:shadow-xl hover:bg-brand-700 transition-all back-to-top z-40">
+        <i class="ph ph-caret-up text-xl"></i>
+    </button>
+
+    <script>
+        function faqApp() {
+            return {
+                // FAQ Data
+                allFAQs: [
+                    {
+                        id: 1,
+                        category: 'general',
+                        icon: 'ph ph-info',
+                        question: 'What is PlasicLMS?',
+                        answer: 'PlasicLMS is an online learning platform that offers interactive courses, live classes, and expert-led training in various fields including programming, design, business, and more. We provide a comprehensive learning experience with certifications and career support.',
+                        additionalInfo: 'All courses are designed by industry experts and regularly updated to reflect current industry standards.',
+                        relatedLinks: [
+                            { text: 'About PlasicLMS', url: 'about.html' },
+                            { text: 'Our Instructors', url: 'instructors.html' }
+                        ],
+                        open: false
+                    },
+                    {
+                        id: 2,
+                        category: 'account',
+                        icon: 'ph ph-user',
+                        question: 'How do I create an account?',
+                        answer: 'You can create an account by clicking the "Get Started" button on our homepage or visiting the signup page. You can sign up using your email address or through Google/GitHub authentication. No credit card is required for the free trial.',
+                        additionalInfo: 'Make sure to verify your email address after signing up to activate your account.',
+                        relatedLinks: [
+                            { text: 'Sign Up Now', url: 'signup.html' },
+                            { text: 'Account Settings Guide', url: 'help.html#account' }
+                        ],
+                        open: false
+                    },
+                    {
+                        id: 3,
+                        category: 'account',
+                        icon: 'ph ph-credit-card',
+                        question: 'What payment methods do you accept?',
+                        answer: 'We accept all major credit cards (Visa, Mastercard, American Express), PayPal, and bank transfers in select regions. All payments are securely processed through encrypted payment gateways.',
+                        additionalInfo: 'For enterprise or team plans, we also accept invoicing with Net 30 payment terms.',
+                        relatedLinks: [
+                            { text: 'Pricing Plans', url: 'pricing.html' },
+                            { text: 'Payment Security', url: 'security.html' }
+                        ],
+                        open: false
+                    },
+                    {
+                        id: 4,
+                        category: 'courses',
+                        icon: 'ph ph-book-open',
+                        question: 'How long do I have access to purchased courses?',
+                        answer: 'Once you purchase a course, you have lifetime access to it. This includes all future updates to the course content, new materials, and resources added by the instructor.',
+                        additionalInfo: 'This applies to individual course purchases. Subscription-based plans provide access only while the subscription is active.',
+                        relatedLinks: [
+                            { text: 'Course Catalog', url: 'courses.html' },
+                            { text: 'Refund Policy', url: 'refund.html' }
+                        ],
+                        open: false
+                    },
+                    {
+                        id: 5,
+                        category: 'courses',
+                        icon: 'ph ph-certificate',
+                        question: 'Do you offer certificates?',
+                        answer: 'Yes! Upon successful completion of any course (including all assignments and final project), you will receive a digital certificate that you can share on LinkedIn and add to your resume.',
+                        additionalInfo: 'Certificates are verified and can be validated by employers through our website.',
+                        relatedLinks: [
+                            { text: 'Sample Certificate', url: 'certificate-sample.html' },
+                            { text: 'Career Services', url: 'career.html' }
+                        ],
+                        open: false
+                    },
+                    {
+                        id: 6,
+                        category: 'technical',
+                        icon: 'ph ph-device-desktop',
+                        question: 'What are the system requirements?',
+                        answer: 'You can access PlasicLMS from any modern web browser (Chrome, Firefox, Safari, Edge) on desktop or mobile devices. We recommend a stable internet connection with at least 5 Mbps for video streaming. Mobile apps are available for iOS and Android.',
+                        additionalInfo: 'For programming courses, you may need specific software which will be mentioned in the course requirements.',
+                        relatedLinks: [
+                            { text: 'Mobile Apps', url: 'apps.html' },
+                            { text: 'Browser Compatibility', url: 'compatibility.html' }
+                        ],
+                        open: false
+                    },
+                    {
+                        id: 7,
+                        category: 'pricing',
+                        icon: 'ph ph-currency-dollar',
+                        question: 'Is there a free trial?',
+                        answer: 'Yes! We offer a 7-day free trial for all subscription plans. During the trial, you have full access to all premium features and courses. No credit card is required to start the trial.',
+                        additionalInfo: 'You can cancel anytime during the trial period and won’t be charged.',
+                        relatedLinks: [
+                            { text: 'Start Free Trial', url: 'signup.html' },
+                            { text: 'Compare Plans', url: 'pricing.html' }
+                        ],
+                        open: false
+                    },
+                    {
+                        id: 8,
+                        category: 'technical',
+                        icon: 'ph ph-question',
+                        question: 'How do I reset my password?',
+                        answer: 'To reset your password, go to the login page and click "Forgot Password". Enter your email address, and we\'ll send you a password reset link. The link will expire in 24 hours for security reasons.',
+                        additionalInfo: 'If you don\'t receive the email within 5 minutes, please check your spam folder.',
+                        relatedLinks: [
+                            { text: 'Reset Password', url: 'reset-password.html' },
+                            { text: 'Account Security', url: 'security.html' }
+                        ],
+                        open: false
+                    },
+                    {
+                        id: 9,
+                        category: 'courses',
+                        icon: 'ph ph-clock',
+                        question: 'Can I learn at my own pace?',
+                        answer: 'Absolutely! All our courses are self-paced. You can access course materials anytime, from anywhere, and learn at a speed that works for you. There are no deadlines for completing courses.',
+                        additionalInfo: 'Live classes are scheduled events, but recordings are available for those who cannot attend.',
+                        relatedLinks: [
+                            { text: 'Learning Schedule Tips', url: 'blog/learning-schedule.html' },
+                            { text: 'Time Management Guide', url: 'blog/time-management.html' }
+                        ],
+                        open: false
+                    },
+                    {
+                        id: 10,
+                        category: 'pricing',
+                        icon: 'ph ph-arrows-clockwise',
+                        question: 'What is your refund policy?',
+                        answer: 'We offer a 30-day money-back guarantee for all course purchases. If you\'re not satisfied with a course, contact our support team within 30 days of purchase for a full refund. Subscription plans can be canceled anytime.',
+                        additionalInfo: 'Refunds are processed within 5-10 business days and returned to the original payment method.',
+                        relatedLinks: [
+                            { text: 'Request Refund', url: 'refund.html' },
+                            { text: 'Terms of Service', url: 'terms.html' }
+                        ],
+                        open: false
+                    },
+                    {
+                        id: 11,
+                        category: 'account',
+                        icon: 'ph ph-users',
+                        question: 'Do you offer team or enterprise plans?',
+                        answer: 'Yes! We offer custom plans for teams and enterprises. These include bulk discounts, dedicated account managers, custom reporting, and integration options. Contact our sales team for a customized quote.',
+                        additionalInfo: 'Enterprise plans include SSO integration and custom learning paths.',
+                        relatedLinks: [
+                            { text: 'Enterprise Solutions', url: 'enterprise.html' },
+                            { text: 'Contact Sales', url: 'contact-sales.html' }
+                        ],
+                        open: false
+                    },
+                    {
+                        id: 12,
+                        category: 'technical',
+                        icon: 'ph ph-download',
+                        question: 'Can I download course materials?',
+                        answer: 'Yes, most course materials (PDFs, slides, code files) are available for download. Video lessons are stream-only due to copyright protection, but you can access them anytime through your account.',
+                        additionalInfo: 'Downloadable materials are available as long as you have access to the course.',
+                        relatedLinks: [
+                            { text: 'Offline Learning Guide', url: 'blog/offline-learning.html' },
+                            { text: 'Course Materials Policy', url: 'materials-policy.html' }
+                        ],
+                        open: false
+                    }
+                ],
+                
+                // UI State
+                filteredFAQs: [],
+                activeCategory: 'all',
+                searchQuery: '',
+                mobileMenuOpen: false,
+                showBackToTop: false,
+                
+                // Methods
+                init() {
+                    // Initialize with all FAQs
+                    this.filteredFAQs = this.allFAQs.map(faq => ({...faq, open: false}));
+                    
+                    // Handle scroll for back-to-top button
+                    window.addEventListener('scroll', this.handleScroll.bind(this));
+                    
+                    // Check URL for category parameter
+                    this.checkUrlParams();
+                },
+                
+                checkUrlParams() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const category = urlParams.get('category');
+                    if (category && this.getCategoryLabel(category)) {
+                        this.filterByCategory(category);
+                    }
+                },
+                
+                filterFAQs() {
+                    let filtered = [...this.allFAQs];
+                    
+                    // Apply search filter
+                    if (this.searchQuery) {
+                        const query = this.searchQuery.toLowerCase();
+                        filtered = filtered.filter(faq => 
+                            faq.question.toLowerCase().includes(query) || 
+                            faq.answer.toLowerCase().includes(query) ||
+                            this.getCategoryLabel(faq.category).toLowerCase().includes(query)
+                        );
+                    }
+                    
+                    // Apply category filter
+                    if (this.activeCategory !== 'all') {
+                        filtered = filtered.filter(faq => faq.category === this.activeCategory);
+                    }
+                    
+                    this.filteredFAQs = filtered.map(faq => ({...faq, open: false}));
+                },
+                
+                filterByCategory(category) {
+                    this.activeCategory = category;
+                    this.filterFAQs();
+                    
+                    // Update URL without reloading
+                    const url = new URL(window.location);
+                    url.searchParams.set('category', category);
+                    window.history.pushState({}, '', url);
+                },
+                
+                toggleFAQ(index) {
+                    this.filteredFAQs[index].open = !this.filteredFAQs[index].open;
+                },
+                
+                clearSearch() {
+                    this.searchQuery = '';
+                    this.activeCategory = 'all';
+                    this.filterFAQs();
+                    
+                    // Clear URL parameter
+                    const url = new URL(window.location);
+                    url.searchParams.delete('category');
+                    window.history.pushState({}, '', url);
+                },
+                
+                getCategoryLabel(category) {
+                    const labels = {
+                        'general': 'General',
+                        'account': 'Account & Billing',
+                        'courses': 'Courses',
+                        'technical': 'Technical Support',
+                        'pricing': 'Pricing & Plans'
+                    };
+                    return labels[category] || category;
+                },
+                
+                highlightText(text) {
+                    if (!this.searchQuery) return text;
+                    
+                    const query = this.searchQuery.toLowerCase();
+                    const regex = new RegExp(`(${query})`, 'gi');
+                    return text.replace(regex, '<span class="highlight">$1</span>');
+                },
+                
+                handleScroll() {
+                    this.showBackToTop = window.scrollY > 300;
+                },
+                
+                scrollToTop() {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>
